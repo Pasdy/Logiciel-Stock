@@ -1,0 +1,52 @@
+MODE D'EMPLOI - LOGICIEL DE SUIVI STOCK / ECONOMAT
+
+Fichier principal : logiciel-suivi-stock.html
+
+OUVERTURE
+1. Double-cliquer sur le fichier logiciel-suivi-stock.html.
+2. Si la page est deja ouverte, appuyer sur Actualiser.
+3. Les donnees sont sauvegardees automatiquement dans le navigateur de l'ordinateur.
+
+ACCES ADMINISTRATEUR
+- Choisir la vue Administrateur en haut a droite.
+- Code administrateur de demonstration : 1234
+- L'administrateur peut gerer les membres, les taches, les emplois du temps, l'historique et les rapports.
+- Le code peut etre modifie depuis Historique > Code admin.
+
+ACCES EMPLOYE
+- Choisir un utilisateur en haut a droite.
+- La vue Employe affiche la journee du membre, son emploi du temps et ses taches du jour.
+- L'employe peut pointer son arrivee, pointer son depart et valider ses taches.
+
+EMPLOIS DU TEMPS
+- Onglet Emplois du temps disponible en administrateur.
+- Chaque membre peut avoir des horaires differents pour chaque jour de la semaine.
+- Pour chaque jour : travail ou repos, heure de debut, heure de fin, pause et note.
+
+PROGRAMME HEBDOMADAIRE
+- Onglet Programme semaine.
+- Le dimanche, tu peux preparer toute la semaine jour par jour.
+- Chaque tache est affectee a une date precise, une heure, un membre et une priorite.
+- Le bouton Dupliquer la semaine recopie le programme vers la semaine suivante.
+
+FONCTIONS DISPONIBLES
+- Tableau de bord du jour.
+- Pointage arrivee et depart.
+- Validation des taches avec date, heure et validateur.
+- Creation, modification, duplication et suppression des taches.
+- Creation, modification et desactivation des membres.
+- Emplois du temps individuels.
+- Programme hebdomadaire jour par jour.
+- Historique des actions.
+- Export rapport Excel au format CSV.
+- Impression / PDF via le bouton Rapport PDF.
+- Sauvegarde JSON.
+
+IMPORTANT
+Cette version fonctionne en local sur un seul appareil. Pour une vraie utilisation multi-utilisateurs en temps reel sur telephones et ordinateurs, il faudra ensuite ajouter une base de donnees et un serveur en ligne.
+
+PHOTOS
+- Photo de profil : aller dans Administrateur > Membres > Modifier, puis choisir une photo de profil.
+- Photo sur une tâche : utiliser le bouton Ajouter photo sur une tâche, ou ajouter des photos depuis le formulaire de modification de la tâche.
+- Les photos sont sauvegardées localement dans le navigateur avec les autres données.
+- Sur téléphone, le bouton Ajouter photo permet normalement de prendre une photo ou de choisir une image existante.
