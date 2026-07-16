@@ -82,7 +82,7 @@ window.sb = window.supabase.createClient(
 console.log("Supabase connecté");
 async function testSupabase(){
     const { data, error } = await window.sb
-        .from("members")
+        .from("Members")
         .select("*");
 
     console.log("Membres Supabase :", data);
