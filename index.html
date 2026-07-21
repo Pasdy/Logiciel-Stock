@@ -285,12 +285,12 @@ scheduleForm.onsubmit = async e => {
     const mid = fd.get('memberId') || scheduleForm.dataset.memberId;
 
     const schedule = dayNames.map((d,i)=>({
-        day: d,
-        work: fd.get('work'+i)==='true',
-        start: fd.get('start'+i),
-        end: fd.get('end'+i),
-        break: fd.get('break'+i),
-        note: fd.get('note'+i)
+        day:d,
+        work:fd.get('work'+i)==='true',
+        start:fd.get('start'+i),
+        end:fd.get('end'+i),
+        break:fd.get('break'+i),
+        note:fd.get('note'+i)
     }));
 
     state.schedules[mid] = schedule;
