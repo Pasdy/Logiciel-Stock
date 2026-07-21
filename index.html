@@ -154,7 +154,7 @@ async function clockIn(){
     };
 
     const { error } = await window.sb
-        .from("Attendance")
+        .from("attendance")
         .upsert({
             member_id: state.currentUser,
             date: today(),
@@ -180,7 +180,7 @@ async function clockIn(){
     };
 
     const { error } = await window.sb
-        .from("Attendance")
+        .from("attendance")
         .upsert({
             member_id: state.currentUser,
             date: today(),
@@ -207,7 +207,7 @@ async function clockIn(){
 
     const { data, error } =
         await window.sb
-            .from("Attendance")
+            .from("attendance")
             .select("*");
 
     if(error){
