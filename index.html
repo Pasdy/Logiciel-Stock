@@ -17,7 +17,19 @@
   </style>
 </head>
 <body>
-  <header><div class="topbar"><div class="brand"><div class="mark">ST</div><div><h1>Suivi Stock & Économat</h1><p>Pointage, tâches journalières, emplois du temps et rapports</p></div></div><div class="session"><div class="field"><label class="label">Utilisateur</label><select id="currentUser"></select></div><div class="field"><label class="label">Vue</label><select id="roleView"><option value="employee">Employé</option><option value="admin">Administrateur</option></select></div></div></div></header>
+  <header><div class="topbar"><div class="brand"><div class="mark">ST</div><div><h1>Suivi Stock & Économat</h1><p>Pointage, tâches journalières, emplois du temps et rapports</p></div></div><div class="session"><div class="field">
+<label class="label">Utilisateur</label>
+<input id="loginUsername" placeholder="Nom utilisateur">
+</div>
+
+<div class="field">
+<label class="label">Mot de passe</label>
+<input id="loginPassword" type="password" placeholder="Mot de passe">
+</div>
+
+<button id="loginBtn" class="secondary">
+Connexion
+</button><div class="field"><label class="label">Vue</label><select id="roleView"><option value="employee">Employé</option><option value="admin">Administrateur</option></select></div></div></div></header>
   <main><nav class="tabs" id="tabs"></nav>
     <section id="dashboard" class="section"><div id="adminNotice"></div><div class="grid dashboard" id="metrics"></div><div class="grid two" style="margin-top:14px"><div class="panel"><div class="toolbar"><h2>Activité du jour</h2><div class="row"><button onclick="openTaskModal()">+ Tâche</button><button class="secondary" onclick="exportReport()">Export Excel</button></div></div><div id="todayTasks" class="list"></div></div><div class="grid"><div class="panel"><h2>Membres présents</h2><div id="presenceList" class="list"></div></div><div class="panel"><h2>Alertes</h2><div id="alerts" class="list"></div></div></div></div></section>
     <section id="myday" class="section active"><div class="grid two"><div class="panel"><h2>Ma journée</h2><div id="myAttendance"></div></div><div class="panel"><h2>Mon emploi du temps</h2><div id="mySchedule"></div></div></div><div class="panel" style="margin-top:14px"><h2>Mes tâches du jour</h2><div id="myTasks" class="list"></div></div></section>
@@ -34,7 +46,15 @@
 <script>
 const storeKey='stockEconomatAppV2'; const oldKey='stockEconomatAppV1'; const dayNames=['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche']; const posts=['Magasinier chef','Magasinier adjoint','Production','Réception','Rangement','Inventaire','Employé polyvalent'];
 const today=()=>new Date().toISOString().slice(0,10); const nowTime=()=>new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}); const uid=()=>Math.random().toString(36).slice(2,9); const addDays=(iso,n)=>{const d=new Date(iso+'T00:00:00'); d.setDate(d.getDate()+n); return d.toISOString().slice(0,10)}; const mondayOf=(iso)=>{const d=new Date(iso+'T00:00:00'); const day=(d.getDay()+6)%7; d.setDate(d.getDate()-day); return d.toISOString().slice(0,10)};
-let state=load(); let active=sessionStorage.getItem('adminUnlocked')==='true'?'dashboard':'myday'; let editingMember=null, editingTask=null; let selectedWeekStart=mondayOf(today());
+let state=load();
+
+const savedUser =
+    sessionStorage.getItem('loggedUser');
+
+if(savedUser){
+    state.loggedUser = JSON.parse(savedUser);
+} 
+let active=sessionStorage.getItem('adminUnlocked')==='true'?'dashboard':'myday'; let editingMember=null, editingTask=null; let selectedWeekStart=mondayOf(today());
 function makeSchedule(){return dayNames.map((d,i)=>({day:d,work:i<6,start:i<5?'08:00':'08:00',end:i<5?'17:00':'13:00',break:'12:00-13:00',note:i===6?'Repos':''}))}
 function t(name,desc,memberId,post,freq,due,priority,photo=false,signature=false,attach=false,barcode=false,date=today()){return {id:uid(),name,desc,memberId,post,freq,due,priority,status:'a faire',date,comment:'',photo,signature,attach,barcode,validatedAt:'',validatedBy:'',taskPhotos:[]}}
 function seed(){const members=[{id:'m1',name:'Membre 1',post:'Magasinier chef',role:'admin',active:true,phone:'',email:'',profilePhoto:''},{id:'m2',name:'Membre 2',post:'Magasinier adjoint',role:'employee',active:true,phone:'',email:'',profilePhoto:''},{id:'m3',name:'Membre 3',post:'Production',role:'employee',active:true,phone:'',email:'',profilePhoto:''},{id:'m4',name:'Membre 4',post:'Réception',role:'employee',active:true,phone:'',email:'',profilePhoto:''}]; const tasks=[t('Contrôle ouverture économat','Vérifier accès, propreté et sécurité de la zone.','m1','Magasinier chef','journalière','08:00','importante'),t('Réception marchandises','Contrôler les produits reçus et joindre le bon de livraison.','m4','Réception','journalière','09:00','urgente',true,false,true,true),t('Rangement zone stock','Ranger les produits selon les emplacements prévus.','m2','Magasinier adjoint','journalière','10:30','normale',true),t('Préparation production','Sortir les produits nécessaires à la production.','m3','Production','journalière','11:00','importante'),t('Inventaire rapide','Contrôler les écarts sur les produits sensibles.','m1','Inventaire','hebdomadaire','15:00','importante',false,true,false,true),t('Clôture journée','Vérifier tâches restantes et anomalies.','m1','Magasinier chef','journalière','17:00','normale')]; const schedules={}; members.forEach(m=>schedules[m.id]=makeSchedule()); return {version:2,settings:{adminCode:'1234'},members,tasks,attendance:{},logs:[],schedules,currentUser:'m1'} }
@@ -171,6 +191,32 @@ function requestAdmin(){const code=prompt('Code administrateur'); if(code===stat
 function render(){normalizeStatuses(); renderUserSelect(); renderRole(); renderTabs(); document.querySelectorAll('.section').forEach(s=>s.classList.toggle('active',s.id===active)); renderDashboard(); renderMyDay(); renderMembers(); renderSchedules(); renderWeekly(); renderTasks(); renderHistory(); renderReports()}
 function renderUserSelect(){const sel=currentUser; const before=sel.value||state.currentUser; sel.innerHTML=state.members.filter(m=>m.active).map(m=>'<option value="'+m.id+'">'+m.name+' - '+m.post+'</option>').join(''); sel.value=before; state.currentUser=sel.value||state.currentUser}
 function renderRole(){roleView.value=isAdminUnlocked()?'admin':'employee'}
+async function loginUser(username, password){
+
+    const { data, error } = await window.sb
+        .from("Members")
+        .select("*")
+        .eq("username", username)
+        .eq("password", password)
+        .single();
+
+    if(error || !data){
+        alert("Identifiant ou mot de passe incorrect");
+        return false;
+    }
+
+    state.currentUser = data.id;
+
+    sessionStorage.setItem(
+        "loggedUser",
+        JSON.stringify(data)
+    );
+
+    console.log("Utilisateur connecté :", data);
+
+    return true;
+}
+
 function renderTabs(){const tabs=isAdminUnlocked()?[['dashboard','Tableau de bord'],['myday','Ma journée'],['weekly','Programme semaine'],['members','Membres'],['schedules','Emplois du temps'],['tasks','Tâches'],['history','Historique'],['reports','Rapports']]:[['myday','Ma journée'],['dashboard','Synthèse'],['weekly','Ma semaine']]; if(!isAdminUnlocked()&&['members','schedules','tasks','history','reports'].includes(active))active='myday'; tabsEl=tabs.map(x=>'<button class="tab '+(active===x[0]?'active':'')+'" onclick="active=\''+x[0]+'\';render()">'+x[1]+'</button>').join(''); document.getElementById('tabs').innerHTML=tabsEl}
 function metric(label,value,color){return '<div class="panel metric"><span>'+label+'</span><strong style="color:'+color+'">'+value+'</strong></div>'} function badge(status){return status==='réalisée'?'b-green':status==='en retard'?'b-red':'b-blue'}
 function taskCard(x){const admin=isAdminUnlocked(); const m=member(x.memberId); return '<div class="item priority-'+x.priority+'"><div class="item-head"><div class="member-line">'+avatarHtml(m,true)+'<div><div class="title">'+x.name+'</div><div class="meta">'+x.date+' · '+userName(x.memberId)+' · '+x.post+' · prévue '+x.due+'</div></div></div><span class="badge '+badge(x.status)+'">'+x.status+'</span></div><div class="meta">'+x.desc+'</div>'+photosHtml(x)+'<div class="actions"><button class="good" onclick="validateTask(\''+x.id+'\')" '+(x.status==='réalisée'?'disabled':'')+'>Valider</button><button class="secondary" onclick="addTaskPhotos(\''+x.id+'\')">Ajouter photo</button>'+(admin?'<button class="secondary" onclick="openTaskModal(\''+x.id+'\')">Modifier</button><button class="secondary" onclick="duplicateTask(\''+x.id+'\')">Dupliquer</button>':'')+'</div></div>'}
@@ -514,9 +560,70 @@ scheduleForm.onsubmit = async e => {
     render();
 }
 async function addTaskPhotos(id){const task=state.tasks.find(t=>t.id===id); if(!task)return; const input=document.createElement('input'); input.type='file'; input.accept='image/*'; input.multiple=true; input.onchange=async()=>{const added=await readFiles(input); if(!added.length)return; task.taskPhotos ||= []; task.taskPhotos.push(...added); log('Ajout photo tâche',task.name+' : '+added.length+' photo(s)'); save(); render()}; input.click()}
-function exportReport(){const rows=[['Date','Tâche','Membre','Poste','Heure prévue','Priorité','Statut','Validation','Validé par']].concat(state.tasks.map(t=>[t.date,t.name,userName(t.memberId),t.post,t.due,t.priority,t.status,t.validatedAt,t.validatedBy])); const csv=rows.map(r=>r.map(v=>'"'+String(v||'').replaceAll('"','""')+'"').join(';')).join('\n'); download('rapport-suivi-stock.csv',csv,'text/csv')} function exportJson(){download('sauvegarde-suivi-stock.json',JSON.stringify(state,null,2),'application/json')} function download(name,content,type){const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([content],{type})); a.download=name; a.click(); URL.revokeObjectURL(a.href)} function clearDemo(){if(confirm('Réinitialiser toutes les données ?')){localStorage.removeItem(storeKey); localStorage.removeItem(oldKey); sessionStorage.removeItem('adminUnlocked'); state=seed(); save(); active='myday'; render()}} function lockAdmin(){sessionStorage.removeItem('adminUnlocked'); active='myday'; render()} function changeAdminCode(){if(!isAdminUnlocked()){requestAdmin(); return} const next=prompt('Nouveau code administrateur',state.settings.adminCode); if(next){state.settings.adminCode=next; log('Modification code admin','Code administrateur modifié'); save(); alert('Code administrateur modifié')}}
-currentUser.onchange=e=>{state.currentUser=e.target.value; save(); render()}; roleView.onchange=e=>{if(e.target.value==='admin'&&!isAdminUnlocked())requestAdmin(); else if(e.target.value==='employee')lockAdmin(); render();
-};
+function exportReport(){const rows=[['Date','Tâche','Membre','Poste','Heure prévue','Priorité','Statut','Validation','Validé par']].concat(state.tasks.map(t=>[t.date,t.name,userName(t.memberId),t.post,t.due,t.priority,t.status,t.validatedAt,t.validatedBy])); const csv=rows.map(r=>r.map(v=>'"'+String(v||'').replaceAll('"','""')+'"').join(';')).join('\n'); download('rapport-suivi-stock.csv',csv,'text/csv')} function exportJson(){download('sauvegarde-suivi-stock.json',JSON.stringify(state,null,2),'application/json')} function download(name,content,type){const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([content],{type})); a.download=name; a.click(); URL.revokeObjectURL(a.href)} function clearDemo(){if(confirm('Réinitialiser toutes les données ?')){localStorage.removeItem(storeKey); localStorage.removeItem(oldKey); sessionStorage.removeItem('adminUnlocked'); state=seed(); save(); active='myday'; render()}} function lockAdmin(){sessionStorage.removeItem('adminUnlocked'); active='myday'; render()} async function login(){
+
+    const username =
+        document.getElementById('loginUsername').value;
+
+    const password =
+        document.getElementById('loginPassword').value;
+
+
+    const {data,error}=await window.sb
+        .from("Members")
+        .select("*")
+        .eq("username",username)
+        .eq("password",password)
+        .single();
+
+
+    if(error || !data){
+
+        alert("Identifiant ou mot de passe incorrect");
+        return;
+    }
+
+
+    state.currentUser=data.id;
+
+    sessionStorage.setItem(
+        "loggedUser",
+        JSON.stringify(data)
+    );
+
+
+    if(data.role_access==="admin"){
+
+        sessionStorage.setItem(
+            "adminUnlocked",
+            "true"
+        );
+
+        active="dashboard";
+
+    }else{
+
+        sessionStorage.removeItem(
+            "adminUnlocked"
+        );
+
+        active="myday";
+    }
+
+
+    save();
+    render();
+
+    console.log(
+        "Connexion réussie :",
+        data
+    );
+} console.log("FONCTION LOGIN CHARGEE");
+ function changeAdminCode(){if(!isAdminUnlocked()){requestAdmin(); return} const next=prompt('Nouveau code administrateur',state.settings.adminCode); if(next){state.settings.adminCode=next; log('Modification code admin','Code administrateur modifié'); save(); alert('Code administrateur modifié')}} const loginBtn = document.getElementById('loginBtn');
+
+loginBtn.onclick = login;
+
+
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -531,7 +638,7 @@ window.sb = window.supabase.createClient(
 );
 
 console.log("Supabase connecté");
-console.log("VERSION 18 JUILLET");
+console.log("VERSION TEST LOGIN");
 
 (async () => {
 
