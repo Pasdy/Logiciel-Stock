@@ -134,7 +134,26 @@ async function loadTasksFromSupabase(){
         state.schedules
     );
 }
-function save(){localStorage.setItem(storeKey,JSON.stringify(state))} function userName(id){return (state.members.find(m=>m.id===id)||{}).name||'Utilisateur'} function member(id){return state.members.find(m=>m.id===id)} function avatarHtml(m,small=false){return m&&m.profilePhoto?'<img class="avatar '+(small?'small':'')+'" src="'+m.profilePhoto+'" alt="Photo de '+m.name+'">':'<span class="avatar '+(small?'small':'')+'">'+((m?.name||'?').trim()[0]||'?')+'</span>'} function photosHtml(task){return (task.taskPhotos||[]).length?'<div class="photos">'+task.taskPhotos.map((p,i)=>'<a href="'+p.data+'" target="_blank" title="'+p.name+'"><img class="task-photo" src="'+p.data+'" alt="Photo tâche '+(i+1)+'"></a>').join('')+'</div>':''} function readFiles(input){return Promise.all([...((input&&input.files)||[])].map(file=>new Promise(resolve=>{const r=new FileReader(); r.onload=()=>resolve({name:file.name,type:file.type,data:r.result,addedAt:today()+" "+nowTime(),addedBy:userName(state.currentUser)}); r.readAsDataURL(file)})))} function log(action,detail){state.logs.unshift({id:uid(),date:today(),time:nowTime(),user:userName(state.currentUser),action,detail}); save()} function isAdminUnlocked(){return sessionStorage.getItem('adminUnlocked')==='true'} function dueLate(task){return task.status!=='réalisée'&&task.date===today()&&task.due&&task.due<nowTime()} function normalizeStatuses(){state.tasks.forEach(x=>{if(dueLate(x))x.status='en retard'}); save()}
+function save(){localStorage.setItem(storeKey,JSON.stringify(state))} function userName(id){return (state.members.find(m=>m.id===id)||{}).name||'Utilisateur'} function member(id){return state.members.find(m=>m.id===id)} function avatarHtml(m,small=false){return m&&m.profilePhoto?'<img class="avatar '+(small?'small':'')+'" src="'+m.profilePhoto+'" alt="Photo de '+m.name+'">':'<span class="avatar '+(small?'small':'')+'">'+((m?.name||'?').trim()[0]||'?')+'</span>'} function photosHtml(task){return (task.taskPhotos||[]).length?'<div class="photos">'+task.taskPhotos.map((p,i)=>'<a href="'+p.data+'" target="_blank" title="'+p.name+'"><img class="task-photo" src="'+p.data+'" alt="Photo tâche '+(i+1)+'"></a>').join('')+'</div>':''} function readFiles(input){return Promise.all([...((input&&input.files)||[])].map(file=>new Promise(resolve=>{const r=new FileReader(); r.onload=()=>resolve({name:file.name,type:file.type,data:r.result,addedAt:today()+" "+nowTime(),addedBy:userName(state.currentUser)}); r.readAsDataURL(file)})))} async function log(action, detail){
+
+    const item = {
+        date: today(),
+        time: nowTime(),
+        user: userName(state.currentUser),
+        action,
+        detail
+    };
+
+    state.logs.unshift(item);
+
+    const { error } = await window.sb
+        .from("logs")
+        .insert(item);
+
+    console.log("Insertion log :", error);
+
+    save();
+} function isAdminUnlocked(){return sessionStorage.getItem('adminUnlocked')==='true'} function dueLate(task){return task.status!=='réalisée'&&task.date===today()&&task.due&&task.due<nowTime()} function normalizeStatuses(){state.tasks.forEach(x=>{if(dueLate(x))x.status='en retard'}); save()}
 function requestAdmin(){const code=prompt('Code administrateur'); if(code===state.settings.adminCode){sessionStorage.setItem('adminUnlocked','true'); active='dashboard'; log('Connexion administrateur','Accès administrateur ouvert'); render()} else if(code!==null){alert('Code administrateur incorrect. Code de démonstration : 1234')}}
 function render(){normalizeStatuses(); renderUserSelect(); renderRole(); renderTabs(); document.querySelectorAll('.section').forEach(s=>s.classList.toggle('active',s.id===active)); renderDashboard(); renderMyDay(); renderMembers(); renderSchedules(); renderWeekly(); renderTasks(); renderHistory(); renderReports()}
 function renderUserSelect(){const sel=currentUser; const before=sel.value||state.currentUser; sel.innerHTML=state.members.filter(m=>m.active).map(m=>'<option value="'+m.id+'">'+m.name+' - '+m.post+'</option>').join(''); sel.value=before; state.currentUser=sel.value||state.currentUser}
