@@ -39,7 +39,9 @@ function makeSchedule(){return dayNames.map((d,i)=>({day:d,work:i<6,start:i<5?'0
 function t(name,desc,memberId,post,freq,due,priority,photo=false,signature=false,attach=false,barcode=false,date=today()){return {id:uid(),name,desc,memberId,post,freq,due,priority,status:'a faire',date,comment:'',photo,signature,attach,barcode,validatedAt:'',validatedBy:'',taskPhotos:[]}}
 function seed(){const members=[{id:'m1',name:'Membre 1',post:'Magasinier chef',role:'admin',active:true,phone:'',email:'',profilePhoto:''},{id:'m2',name:'Membre 2',post:'Magasinier adjoint',role:'employee',active:true,phone:'',email:'',profilePhoto:''},{id:'m3',name:'Membre 3',post:'Production',role:'employee',active:true,phone:'',email:'',profilePhoto:''},{id:'m4',name:'Membre 4',post:'Réception',role:'employee',active:true,phone:'',email:'',profilePhoto:''}]; const tasks=[t('Contrôle ouverture économat','Vérifier accès, propreté et sécurité de la zone.','m1','Magasinier chef','journalière','08:00','importante'),t('Réception marchandises','Contrôler les produits reçus et joindre le bon de livraison.','m4','Réception','journalière','09:00','urgente',true,false,true,true),t('Rangement zone stock','Ranger les produits selon les emplacements prévus.','m2','Magasinier adjoint','journalière','10:30','normale',true),t('Préparation production','Sortir les produits nécessaires à la production.','m3','Production','journalière','11:00','importante'),t('Inventaire rapide','Contrôler les écarts sur les produits sensibles.','m1','Inventaire','hebdomadaire','15:00','importante',false,true,false,true),t('Clôture journée','Vérifier tâches restantes et anomalies.','m1','Magasinier chef','journalière','17:00','normale')]; const schedules={}; members.forEach(m=>schedules[m.id]=makeSchedule()); return {version:2,settings:{adminCode:'1234'},members,tasks,attendance:{},logs:[],schedules,currentUser:'m1'} }
 function migrate(s){if(!s)return seed(); s.version=2; s.settings ||= {adminCode:'1234'}; s.settings.adminCode ||= '1234'; s.attendance ||= {}; s.logs ||= []; s.schedules ||= {}; s.members ||= []; s.tasks ||= []; s.members.forEach(m=>{m.active = m.active!==false; m.role ||= m.id==='m1'?'admin':'employee'; m.post ||= 'Employé polyvalent'; m.profilePhoto ||= ''; if(!s.schedules[m.id]) s.schedules[m.id]=makeSchedule()}); s.tasks.forEach(x=>{x.date ||= today(); x.freq = x.freq==='quotidienne'?'journalière':(x.freq||'journalière'); x.status ||= 'a faire'; x.priority ||= 'normale'; x.taskPhotos ||= []}); return s}
-function load(){try{return migrate(JSON.parse(localStorage.getItem(storeKey))||JSON.parse(localStorage.getItem(oldKey))||seed())}catch(e){return seed()}} async function loadMembersFromSupabase(){ console.log("Fonction loadMembersFromSupabase lancée");
+function load(){try{return migrate(JSON.parse(localStorage.getItem(storeKey))||JSON.parse(localStorage.getItem(oldKey))||seed())}catch(e){return seed()}} async function loadMembersFromSupabase(){
+
+    console.log("Fonction loadMembersFromSupabase lancée");
 
     const { data, error } = await window.sb
         .from("Members")
@@ -54,15 +56,62 @@ function load(){try{return migrate(JSON.parse(localStorage.getItem(storeKey))||J
         id: String(m.id),
         name: m.Nom,
         post: m.Poste,
-        role: m.Role === "Administrateur" ? "admin" : "employee",
+        role: m.Role === "Administrateur"
+            ? "admin"
+            : "employee",
         phone: m.Telephone || "",
         active: m.Actif
     }));
 
-    save();
-    render();
+    console.log(
+        "Membres chargés depuis Supabase :",
+        state.members
+    );
+}
 
-    console.log("Membres chargés depuis Supabase :", state.members);
+async function loadTasksFromSupabase(){
+
+    console.log("Chargement tâches Supabase");
+
+    const { data, error } = await window.sb
+        .from("Tasks")
+        .select("*");
+
+    if(error){
+        console.log(
+            "Erreur chargement tâches :",
+            error
+        );
+        return;
+    }
+
+    state.tasks = data.map(t => ({
+        id: String(t.id),
+        name: t.titre || "",
+        desc: t.description || "",
+        memberId: t.assignee || "",
+        freq: t.frequence || "journalière",
+        due: t.heure_prevue || "",
+        priority: t.priorite || "normale",
+        status: t.completed
+            ? "réalisée"
+            : "a faire",
+        date: today(),
+        post: "",
+        comment: "",
+        validatedAt: "",
+        validatedBy: "",
+        photo: false,
+        signature: false,
+        attach: false,
+        barcode: false,
+        taskPhotos: []
+    }));
+
+    console.log(
+        "Tâches chargées :",
+        state.tasks
+    );
 } function save(){localStorage.setItem(storeKey,JSON.stringify(state))} function userName(id){return (state.members.find(m=>m.id===id)||{}).name||'Utilisateur'} function member(id){return state.members.find(m=>m.id===id)} function avatarHtml(m,small=false){return m&&m.profilePhoto?'<img class="avatar '+(small?'small':'')+'" src="'+m.profilePhoto+'" alt="Photo de '+m.name+'">':'<span class="avatar '+(small?'small':'')+'">'+((m?.name||'?').trim()[0]||'?')+'</span>'} function photosHtml(task){return (task.taskPhotos||[]).length?'<div class="photos">'+task.taskPhotos.map((p,i)=>'<a href="'+p.data+'" target="_blank" title="'+p.name+'"><img class="task-photo" src="'+p.data+'" alt="Photo tâche '+(i+1)+'"></a>').join('')+'</div>':''} function readFiles(input){return Promise.all([...((input&&input.files)||[])].map(file=>new Promise(resolve=>{const r=new FileReader(); r.onload=()=>resolve({name:file.name,type:file.type,data:r.result,addedAt:today()+" "+nowTime(),addedBy:userName(state.currentUser)}); r.readAsDataURL(file)})))} function log(action,detail){state.logs.unshift({id:uid(),date:today(),time:nowTime(),user:userName(state.currentUser),action,detail}); save()} function isAdminUnlocked(){return sessionStorage.getItem('adminUnlocked')==='true'} function dueLate(task){return task.status!=='réalisée'&&task.date===today()&&task.due&&task.due<nowTime()} function normalizeStatuses(){state.tasks.forEach(x=>{if(dueLate(x))x.status='en retard'}); save()}
 function requestAdmin(){const code=prompt('Code administrateur'); if(code===state.settings.adminCode){sessionStorage.setItem('adminUnlocked','true'); active='dashboard'; log('Connexion administrateur','Accès administrateur ouvert'); render()} else if(code!==null){alert('Code administrateur incorrect. Code de démonstration : 1234')}}
 function render(){normalizeStatuses(); renderUserSelect(); renderRole(); renderTabs(); document.querySelectorAll('.section').forEach(s=>s.classList.toggle('active',s.id===active)); renderDashboard(); renderMyDay(); renderMembers(); renderSchedules(); renderWeekly(); renderTasks(); renderHistory(); renderReports()}
@@ -83,7 +132,22 @@ function renderHistory(){const q=(historySearch?.value||'').toLowerCase(); const
 function renderReports(){const byMember={}; state.members.forEach(m=>byMember[m.name]=state.tasks.filter(t=>t.memberId===m.id&&t.status==='réalisée').length); stats.innerHTML=Object.entries(byMember).map(([k,v])=>'<div class="item"><div class="item-head"><span>'+k+'</span><b>'+v+' tâche(s) réalisée(s)</b></div></div>').join('')}
 function openMemberModal(id){if(!isAdminUnlocked()){requestAdmin(); return} editingMember=id; const m=id?member(id):{name:'',post:posts[0],role:'employee',active:true,phone:'',email:'',profilePhoto:''}; memberForm.innerHTML='<div class="field full"><label class="label">Photo de profil</label><div class="profile-preview"><span id="profilePreview">'+avatarHtml(m)+'</span><div style="flex:1"><input name="profilePhotoFile" type="file" accept="image/*" onchange="previewProfilePhoto(this)"><input name="profilePhoto" type="hidden" value="'+(m.profilePhoto||'')+'"><button class="secondary" type="button" onclick="removeProfilePhoto()" style="margin-top:8px">Retirer la photo</button></div></div></div><div class="field"><label class="label">Nom</label><input name="name" value="'+m.name+'" required></div><div class="field"><label class="label">Poste</label><select name="post">'+posts.map(p=>'<option '+(p===m.post?'selected':'')+'>'+p+'</option>').join('')+'</select></div><div class="field"><label class="label">Rôle</label><select name="role"><option value="employee">Employé</option><option value="admin" '+(m.role==='admin'?'selected':'')+'>Administrateur</option></select></div><div class="field"><label class="label">Statut</label><select name="active"><option value="true">Actif</option><option value="false" '+(!m.active?'selected':'')+'>Inactif</option></select></div><div class="field"><label class="label">Téléphone</label><input name="phone" value="'+(m.phone||'')+'"></div><div class="field"><label class="label">E-mail</label><input name="email" value="'+(m.email||'')+'"></div><div class="full row right"><button class="secondary" type="button" onclick="memberDialog.close()">Annuler</button><button>Enregistrer</button></div>'; memberDialog.showModal()}
 memberForm.onsubmit=async e=>{e.preventDefault(); const d=Object.fromEntries(new FormData(memberForm)); let profilePhoto=d.profilePhoto||''; const fileInput=memberForm.querySelector('[name="profilePhotoFile"]'); const files=await readFiles(fileInput); if(files[0]) profilePhoto=files[0].data; const item={id:editingMember||uid(),name:d.name,post:d.post,role:d.role,active:d.active==='true',phone:d.phone,email:d.email,profilePhoto}; if(editingMember){Object.assign(member(editingMember),item); log('Modification membre',item.name)}else{state.members.push(item); state.schedules[item.id]=makeSchedule(); log('Création membre',item.name)} save(); memberDialog.close(); render()}; function toggleMember(id){if(!isAdminUnlocked()){requestAdmin(); return} const m=member(id); m.active=!m.active; log(m.active?'Activation membre':'Désactivation membre',m.name); render()} async function previewProfilePhoto(input){const files=await readFiles(input); if(files[0]){memberForm.querySelector('[name="profilePhoto"]').value=files[0].data; profilePreview.innerHTML='<img class="avatar" src="'+files[0].data+'" alt="Photo de profil">'}} function removeProfilePhoto(){memberForm.querySelector('[name="profilePhoto"]').value=''; profilePreview.innerHTML='<span class="avatar">?</span>'; const file=memberForm.querySelector('[name="profilePhotoFile"]'); if(file) file.value=''}
-function openTaskModal(id,date){if(!isAdminUnlocked()){requestAdmin(); return} editingTask=id; const x=id?state.tasks.find(t=>t.id===id):t('','','m1',posts[0],'journalière','08:00','normale',false,false,false,false,date||today()); taskForm.innerHTML='<div class="field full"><label class="label">Nom de la tâche</label><input name="name" value="'+x.name+'" required></div><div class="field full"><label class="label">Description</label><textarea name="desc">'+x.desc+'</textarea></div><div class="field"><label class="label">Collaborateur</label><select name="memberId">'+state.members.filter(m=>m.active).map(m=>'<option value="'+m.id+'" '+(m.id===x.memberId?'selected':'')+'>'+m.name+'</option>').join('')+'</select></div><div class="field"><label class="label">Poste</label><select name="post">'+posts.map(p=>'<option '+(p===x.post?'selected':'')+'>'+p+'</option>').join('')+'</select></div><div class="field"><label class="label">Fréquence</label><select name="freq">'+['journalière','hebdomadaire','mensuelle','ponctuelle'].map(p=>'<option '+(p===x.freq?'selected':'')+'>'+p+'</option>').join('')+'</select></div><div class="field"><label class="label">Date précise</label><input name="date" type="date" value="'+(x.date||today())+'"></div><div class="field"><label class="label">Heure prévue</label><input name="due" type="time" value="'+x.due+'"></div><div class="field"><label class="label">Priorité</label><select name="priority">'+['faible','normale','importante','urgente'].map(p=>'<option '+(p===x.priority?'selected':'')+'>'+p+'</option>').join('')+'</select></div><div class="field"><label class="label">Statut</label><select name="status">'+['a faire','en cours','réalisée','en retard','annulée','reportée'].map(p=>'<option '+(p===x.status?'selected':'')+'>'+p+'</option>').join('')+'</select></div><div class="field"><label class="label">Options</label><select name="options" multiple><option value="photo" '+(x.photo?'selected':'')+'>Photo</option><option value="signature" '+(x.signature?'selected':'')+'>Signature</option><option value="attach" '+(x.attach?'selected':'')+'>Pièce jointe</option><option value="barcode" '+(x.barcode?'selected':'')+'>Code-barres</option></select></div><div class="field full"><label class="label">Photos de la tâche</label><input name="taskPhotoFiles" type="file" accept="image/*" multiple><div class="meta">Les photos existantes sont conservées. Ajoute ici les nouvelles photos à joindre.</div>'+photosHtml(x)+'</div><div class="full row right"><button class="secondary" type="button" onclick="taskDialog.close()">Annuler</button><button>Enregistrer</button></div>'; taskDialog.showModal()}
+function openTaskModal(id,date){if(!isAdminUnlocked()){requestAdmin(); return} editingTask=id; const defaultMember =
+    state.members.length ? state.members[0].id : '';
+
+const x = id
+    ? state.tasks.find(t=>t.id===id)
+    : t(
+        '',
+        '',
+        defaultMember,
+        posts[0],
+        'journalière',
+        '08:00',
+        'normale',
+        false,false,false,false,
+        date || today()
+      ); taskForm.innerHTML='<div class="field full"><label class="label">Nom de la tâche</label><input name="name" value="'+x.name+'" required></div><div class="field full"><label class="label">Description</label><textarea name="desc">'+x.desc+'</textarea></div><div class="field"><label class="label">Collaborateur</label><select name="memberId">'+state.members.filter(m=>m.active).map(m=>'<option value="'+m.id+'" '+(m.id===x.memberId?'selected':'')+'>'+m.name+'</option>').join('')+'</select></div><div class="field"><label class="label">Poste</label><select name="post">'+posts.map(p=>'<option '+(p===x.post?'selected':'')+'>'+p+'</option>').join('')+'</select></div><div class="field"><label class="label">Fréquence</label><select name="freq">'+['journalière','hebdomadaire','mensuelle','ponctuelle'].map(p=>'<option '+(p===x.freq?'selected':'')+'>'+p+'</option>').join('')+'</select></div><div class="field"><label class="label">Date précise</label><input name="date" type="date" value="'+(x.date||today())+'"></div><div class="field"><label class="label">Heure prévue</label><input name="due" type="time" value="'+x.due+'"></div><div class="field"><label class="label">Priorité</label><select name="priority">'+['faible','normale','importante','urgente'].map(p=>'<option '+(p===x.priority?'selected':'')+'>'+p+'</option>').join('')+'</select></div><div class="field"><label class="label">Statut</label><select name="status">'+['a faire','en cours','réalisée','en retard','annulée','reportée'].map(p=>'<option '+(p===x.status?'selected':'')+'>'+p+'</option>').join('')+'</select></div><div class="field"><label class="label">Options</label><select name="options" multiple><option value="photo" '+(x.photo?'selected':'')+'>Photo</option><option value="signature" '+(x.signature?'selected':'')+'>Signature</option><option value="attach" '+(x.attach?'selected':'')+'>Pièce jointe</option><option value="barcode" '+(x.barcode?'selected':'')+'>Code-barres</option></select></div><div class="field full"><label class="label">Photos de la tâche</label><input name="taskPhotoFiles" type="file" accept="image/*" multiple><div class="meta">Les photos existantes sont conservées. Ajoute ici les nouvelles photos à joindre.</div>'+photosHtml(x)+'</div><div class="full row right"><button class="secondary" type="button" onclick="taskDialog.close()">Annuler</button><button>Enregistrer</button></div>'; taskDialog.showModal()}
 taskForm.onsubmit=async e=>{e.preventDefault(); const fd=new FormData(taskForm); const opts=fd.getAll('options'); const existing=editingTask?(state.tasks.find(t=>t.id===editingTask).taskPhotos||[]):[]; const added=await readFiles(taskForm.querySelector('[name="taskPhotoFiles"]')); const item={id:editingTask||uid(),name:fd.get('name'),desc:fd.get('desc'),memberId:fd.get('memberId'),post:fd.get('post'),freq:fd.get('freq'),date:fd.get('date'),due:fd.get('due'),priority:fd.get('priority'),status:fd.get('status'),comment:'',validatedAt:'',validatedBy:'',photo:opts.includes('photo'),signature:opts.includes('signature'),attach:opts.includes('attach'),barcode:opts.includes('barcode'),taskPhotos:[...existing,...added]}; if(editingTask){
 
     Object.assign(
@@ -117,7 +181,8 @@ function openScheduleModal(memberId){if(!isAdminUnlocked()){requestAdmin(); retu
 scheduleForm.onsubmit=e=>{e.preventDefault(); const fd=new FormData(scheduleForm); const mid=fd.get('memberId')||scheduleForm.dataset.memberId; state.schedules[mid]=dayNames.map((d,i)=>({day:d,work:fd.get('work'+i)==='true',start:fd.get('start'+i),end:fd.get('end'+i),break:fd.get('break'+i),note:fd.get('note'+i)})); log('Modification emploi du temps',userName(mid)); save(); scheduleDialog.close(); render()}
 async function addTaskPhotos(id){const task=state.tasks.find(t=>t.id===id); if(!task)return; const input=document.createElement('input'); input.type='file'; input.accept='image/*'; input.multiple=true; input.onchange=async()=>{const added=await readFiles(input); if(!added.length)return; task.taskPhotos ||= []; task.taskPhotos.push(...added); log('Ajout photo tâche',task.name+' : '+added.length+' photo(s)'); save(); render()}; input.click()}
 function exportReport(){const rows=[['Date','Tâche','Membre','Poste','Heure prévue','Priorité','Statut','Validation','Validé par']].concat(state.tasks.map(t=>[t.date,t.name,userName(t.memberId),t.post,t.due,t.priority,t.status,t.validatedAt,t.validatedBy])); const csv=rows.map(r=>r.map(v=>'"'+String(v||'').replaceAll('"','""')+'"').join(';')).join('\n'); download('rapport-suivi-stock.csv',csv,'text/csv')} function exportJson(){download('sauvegarde-suivi-stock.json',JSON.stringify(state,null,2),'application/json')} function download(name,content,type){const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([content],{type})); a.download=name; a.click(); URL.revokeObjectURL(a.href)} function clearDemo(){if(confirm('Réinitialiser toutes les données ?')){localStorage.removeItem(storeKey); localStorage.removeItem(oldKey); sessionStorage.removeItem('adminUnlocked'); state=seed(); save(); active='myday'; render()}} function lockAdmin(){sessionStorage.removeItem('adminUnlocked'); active='myday'; render()} function changeAdminCode(){if(!isAdminUnlocked()){requestAdmin(); return} const next=prompt('Nouveau code administrateur',state.settings.adminCode); if(next){state.settings.adminCode=next; log('Modification code admin','Code administrateur modifié'); save(); alert('Code administrateur modifié')}}
-currentUser.onchange=e=>{state.currentUser=e.target.value; save(); render()}; roleView.onchange=e=>{if(e.target.value==='admin'&&!isAdminUnlocked())requestAdmin(); else if(e.target.value==='employee')lockAdmin(); render()}; save(); render();
+currentUser.onchange=e=>{state.currentUser=e.target.value; save(); render()}; roleView.onchange=e=>{if(e.target.value==='admin'&&!isAdminUnlocked())requestAdmin(); else if(e.target.value==='employee')lockAdmin(); render();
+};
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -132,22 +197,19 @@ window.sb = window.supabase.createClient(
 );
 
 console.log("Supabase connecté");
+console.log("VERSION 18 JUILLET");
 
-console.log("Je vais lancer la fonction");
+(async () => {
 
-loadMembersFromSupabase();
+    await loadMembersFromSupabase();
 
-console.log("Fonction lancée"); loadMembersFromSupabase();
-async function testSupabase(){
-    const { data, error } = await window.sb
-        .from("Members")
-        .select("*");
+    await loadTasksFromSupabase();
 
-    console.log("Membres Supabase :", data);
-    console.log("Erreur Supabase :", error);
-}
+    save();
 
-testSupabase();
+    render();
+
+})();
 </script>
 </body>
 </html>
