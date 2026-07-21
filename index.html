@@ -278,7 +278,38 @@ if(editingTask){
     log('Création tâche', item.name);
 } if(added.length) log('Ajout photo tâche',item.name+' : '+added.length+' photo(s)'); save(); taskDialog.close(); render()};
 function openScheduleModal(memberId){if(!isAdminUnlocked()){requestAdmin(); return} const mid=memberId||state.currentUser; scheduleForm.dataset.memberId=mid; const m=member(mid); const schedule=state.schedules[mid]||makeSchedule(); scheduleForm.innerHTML='<div class="field full"><label class="label">Membre</label><select name="memberId" onchange="scheduleDialog.close(); openScheduleModal(this.value)">'+state.members.map(x=>'<option value="'+x.id+'" '+(x.id===mid?'selected':'')+'>'+x.name+'</option>').join('')+'</select></div>'+schedule.map((s,i)=>'<div class="field"><label class="label">'+s.day+'</label><select name="work'+i+'"><option value="true" '+(s.work?'selected':'')+'>Travail</option><option value="false" '+(!s.work?'selected':'')+'>Repos</option></select></div><div class="field"><label class="label">Horaires</label><div class="split"><input name="start'+i+'" type="time" value="'+s.start+'"><input name="end'+i+'" type="time" value="'+s.end+'"></div></div><div class="field"><label class="label">Pause</label><input name="break'+i+'" value="'+(s.break||'')+'"></div><div class="field"><label class="label">Note</label><input name="note'+i+'" value="'+(s.note||'')+'"></div>').join('')+'<div class="full row right"><button class="secondary" type="button" onclick="scheduleDialog.close()">Annuler</button><button>Enregistrer</button></div>'; scheduleDialog.showModal()}
-scheduleForm.onsubmit=e=>{e.preventDefault(); const fd=new FormData(scheduleForm); const mid=fd.get('memberId')||scheduleForm.dataset.memberId; state.schedules[mid]=dayNames.map((d,i)=>({day:d,work:fd.get('work'+i)==='true',start:fd.get('start'+i),end:fd.get('end'+i),break:fd.get('break'+i),note:fd.get('note'+i)})); log('Modification emploi du temps',userName(mid)); save(); scheduleDialog.close(); render()}
+scheduleForm.onsubmit = async e => {
+    e.preventDefault();
+
+    const fd = new FormData(scheduleForm);
+    const mid = fd.get('memberId') || scheduleForm.dataset.memberId;
+
+    const schedule = dayNames.map((d,i)=>({
+        day: d,
+        work: fd.get('work'+i)==='true',
+        start: fd.get('start'+i),
+        end: fd.get('end'+i),
+        break: fd.get('break'+i),
+        note: fd.get('note'+i)
+    }));
+
+    state.schedules[mid] = schedule;
+
+    const { error } = await window.sb
+        .from("Schedules")
+        .upsert({
+            member_id: mid,
+            planning: schedule
+        });
+
+    console.log("Enregistrement planning :", error);
+
+    log('Modification emploi du temps', userName(mid));
+
+    save();
+    scheduleDialog.close();
+    render();
+}
 async function addTaskPhotos(id){const task=state.tasks.find(t=>t.id===id); if(!task)return; const input=document.createElement('input'); input.type='file'; input.accept='image/*'; input.multiple=true; input.onchange=async()=>{const added=await readFiles(input); if(!added.length)return; task.taskPhotos ||= []; task.taskPhotos.push(...added); log('Ajout photo tâche',task.name+' : '+added.length+' photo(s)'); save(); render()}; input.click()}
 function exportReport(){const rows=[['Date','Tâche','Membre','Poste','Heure prévue','Priorité','Statut','Validation','Validé par']].concat(state.tasks.map(t=>[t.date,t.name,userName(t.memberId),t.post,t.due,t.priority,t.status,t.validatedAt,t.validatedBy])); const csv=rows.map(r=>r.map(v=>'"'+String(v||'').replaceAll('"','""')+'"').join(';')).join('\n'); download('rapport-suivi-stock.csv',csv,'text/csv')} function exportJson(){download('sauvegarde-suivi-stock.json',JSON.stringify(state,null,2),'application/json')} function download(name,content,type){const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([content],{type})); a.download=name; a.click(); URL.revokeObjectURL(a.href)} function clearDemo(){if(confirm('Réinitialiser toutes les données ?')){localStorage.removeItem(storeKey); localStorage.removeItem(oldKey); sessionStorage.removeItem('adminUnlocked'); state=seed(); save(); active='myday'; render()}} function lockAdmin(){sessionStorage.removeItem('adminUnlocked'); active='myday'; render()} function changeAdminCode(){if(!isAdminUnlocked()){requestAdmin(); return} const next=prompt('Nouveau code administrateur',state.settings.adminCode); if(next){state.settings.adminCode=next; log('Modification code admin','Code administrateur modifié'); save(); alert('Code administrateur modifié')}}
 currentUser.onchange=e=>{state.currentUser=e.target.value; save(); render()}; roleView.onchange=e=>{if(e.target.value==='admin'&&!isAdminUnlocked())requestAdmin(); else if(e.target.value==='employee')lockAdmin(); render();
