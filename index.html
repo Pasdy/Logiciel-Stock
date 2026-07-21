@@ -96,7 +96,7 @@ async function loadTasksFromSupabase(){
         status: t.completed
             ? "réalisée"
             : "a faire",
-        date: today(),
+        date: t.date || today(),
         post: "",
         comment: "",
         validatedAt: "",
@@ -202,16 +202,16 @@ if(editingTask){
 
     const { error } = await window.sb
         .from("Tasks")
-        .insert({
-            titre: item.name,
-            description: item.desc,
-            frequence: item.freq,
-            heure_prevue: item.due,
-            priorite: item.priority,
-            assignee: item.memberId,
-            completed: false
-        });
-
+       .insert({
+    titre: item.name,
+    description: item.desc,
+    frequence: item.freq,
+    heure_prevue: item.due,
+    priorite: item.priority,
+    assignee: item.memberId,
+    date: item.date,
+    completed: false
+});
     console.log("Insertion tâche :", error);
 
     log('Création tâche', item.name);
