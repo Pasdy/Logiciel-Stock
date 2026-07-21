@@ -155,10 +155,24 @@ taskForm.onsubmit=async e=>{e.preventDefault(); const fd=new FormData(taskForm);
         item
     );
 
+    const { error } = await window.sb
+        .from("Tasks")
+        .update({
+            titre: item.name,
+            description: item.desc,
+            frequence: item.freq,
+            heure_prevue: item.due,
+            priorite: item.priority,
+            assignee: item.memberId,
+            completed: item.status === "réalisée"
+        })
+        .eq("id", editingTask);
+
+    console.log("Modification :", error);
+
     log('Modification tâche', item.name);
 
 }else{
-
     state.tasks.push(item);
 
     const { error } = await window.sb
