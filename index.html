@@ -136,7 +136,18 @@ photo_urls: t.photo_urls || []
         state.schedules
     );
 }
-function save(){localStorage.setItem(storeKey,JSON.stringify(state))} function userName(id){return (state.members.find(m=>m.id===id)||{}).name||'Utilisateur'} function member(id){return state.members.find(m=>m.id===id)} function avatarHtml(m,small=false){return m&&m.profilePhoto?'<img class="avatar '+(small?'small':'')+'" src="'+m.profilePhoto+'" alt="Photo de '+m.name+'">':'<span class="avatar '+(small?'small':'')+'">'+((m?.name||'?').trim()[0]||'?')+'</span>'} function photosHtml(task){return (task.taskPhotos||[]).length?'<div class="photos">'+task.taskPhotos.map((p,i)=>'<a href="'+p.data+'" target="_blank" title="'+p.name+'"><img class="task-photo" src="'+p.data+'" alt="Photo tâche '+(i+1)+'"></a>').join('')+'</div>':''} function readFiles(input){return Promise.all([...((input&&input.files)||[])].map(file=>new Promise(resolve=>{const r=new FileReader(); r.onload=()=>resolve({name:file.name,type:file.type,data:r.result,addedAt:today()+" "+nowTime(),addedBy:userName(state.currentUser)}); r.readAsDataURL(file)})))} async function log(action, detail){
+function save(){localStorage.setItem(storeKey,JSON.stringify(state))} function userName(id){return (state.members.find(m=>m.id===id)||{}).name||'Utilisateur'} function member(id){return state.members.find(m=>m.id===id)} function avatarHtml(m,small=false){return m&&m.profilePhoto?'<img class="avatar '+(small?'small':'')+'" src="'+m.profilePhoto+'" alt="Photo de '+m.name+'">':'<span class="avatar '+(small?'small':'')+'">'+((m?.name||'?').trim()[0]||'?')+'</span>'} function photosHtml(task){
+
+    return (task.photo_urls || []).length
+        ? '<div class="photos">' +
+            task.photo_urls.map((url,i)=>
+                '<a href="'+url+'" target="_blank">' +
+                '<img class="task-photo" src="'+url+'" alt="Photo tâche '+(i+1)+'">' +
+                '</a>'
+            ).join('') +
+          '</div>'
+        : '';
+}function readFiles(input){return Promise.all([...((input&&input.files)||[])].map(file=>new Promise(resolve=>{const r=new FileReader(); r.onload=()=>resolve({name:file.name,type:file.type,data:r.result,addedAt:today()+" "+nowTime(),addedBy:userName(state.currentUser)}); r.readAsDataURL(file)})))} async function log(action, detail){
 
     const item = {
         date: today(),
