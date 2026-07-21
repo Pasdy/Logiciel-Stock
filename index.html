@@ -101,11 +101,13 @@ async function loadTasksFromSupabase(){
         comment: "",
         validatedAt: "",
         validatedBy: "",
-        photo: false,
-        signature: false,
-        attach: false,
-        barcode: false,
-        taskPhotos: []
+photo: false,
+signature: false,
+attach: false,
+barcode: false,
+taskPhotos: [],
+photo_urls: t.photo_urls || []
+       
     }));
 
     console.log(
@@ -354,6 +356,51 @@ else{
 
     save();
     render();
+} async function uploadTaskPhotos(files){
+
+    console.log("Upload lancé :", files);
+    const urls = [];
+
+    for(const file of files){
+
+        const fileName =
+            Date.now()
+            + "_"
+            + Math.random()
+                .toString(36)
+                .substring(2)
+            + "_"
+            + file.name;
+
+        const { error } =
+            await window.sb.storage
+                .from("task-photos")
+                .upload(
+                    fileName,
+                    file
+                );
+
+        console.log(
+            "Upload photo :",
+            error
+        );
+
+        if(!error){
+
+            const { data } =
+                window.sb.storage
+                    .from("task-photos")
+                    .getPublicUrl(
+                        fileName
+                    );
+
+            urls.push(
+                data.publicUrl
+            );
+        }
+    }
+
+    return urls;
 } async function previewProfilePhoto(input){const files=await readFiles(input); if(files[0]){memberForm.querySelector('[name="profilePhoto"]').value=files[0].data; profilePreview.innerHTML='<img class="avatar" src="'+files[0].data+'" alt="Photo de profil">'}} function removeProfilePhoto(){memberForm.querySelector('[name="profilePhoto"]').value=''; profilePreview.innerHTML='<span class="avatar">?</span>'; const file=memberForm.querySelector('[name="profilePhotoFile"]'); if(file) file.value=''}
 function openTaskModal(id,date){if(!isAdminUnlocked()){requestAdmin(); return} editingTask=id; const defaultMember =
     state.members.length ? state.members[0].id : '';
@@ -371,7 +418,12 @@ const x = id
         false,false,false,false,
         date || today()
       ); taskForm.innerHTML='<div class="field full"><label class="label">Nom de la tâche</label><input name="name" value="'+x.name+'" required></div><div class="field full"><label class="label">Description</label><textarea name="desc">'+x.desc+'</textarea></div><div class="field"><label class="label">Collaborateur</label><select name="memberId">'+state.members.filter(m=>m.active).map(m=>'<option value="'+m.id+'" '+(m.id===x.memberId?'selected':'')+'>'+m.name+'</option>').join('')+'</select></div><div class="field"><label class="label">Poste</label><select name="post">'+posts.map(p=>'<option '+(p===x.post?'selected':'')+'>'+p+'</option>').join('')+'</select></div><div class="field"><label class="label">Fréquence</label><select name="freq">'+['journalière','hebdomadaire','mensuelle','ponctuelle'].map(p=>'<option '+(p===x.freq?'selected':'')+'>'+p+'</option>').join('')+'</select></div><div class="field"><label class="label">Date précise</label><input name="date" type="date" value="'+(x.date||today())+'"></div><div class="field"><label class="label">Heure prévue</label><input name="due" type="time" value="'+x.due+'"></div><div class="field"><label class="label">Priorité</label><select name="priority">'+['faible','normale','importante','urgente'].map(p=>'<option '+(p===x.priority?'selected':'')+'>'+p+'</option>').join('')+'</select></div><div class="field"><label class="label">Statut</label><select name="status">'+['a faire','en cours','réalisée','en retard','annulée','reportée'].map(p=>'<option '+(p===x.status?'selected':'')+'>'+p+'</option>').join('')+'</select></div><div class="field"><label class="label">Options</label><select name="options" multiple><option value="photo" '+(x.photo?'selected':'')+'>Photo</option><option value="signature" '+(x.signature?'selected':'')+'>Signature</option><option value="attach" '+(x.attach?'selected':'')+'>Pièce jointe</option><option value="barcode" '+(x.barcode?'selected':'')+'>Code-barres</option></select></div><div class="field full"><label class="label">Photos de la tâche</label><input name="taskPhotoFiles" type="file" accept="image/*" multiple><div class="meta">Les photos existantes sont conservées. Ajoute ici les nouvelles photos à joindre.</div>'+photosHtml(x)+'</div><div class="full row right"><button class="secondary" type="button" onclick="taskDialog.close()">Annuler</button><button>Enregistrer</button></div>'; taskDialog.showModal()}
-taskForm.onsubmit=async e=>{e.preventDefault(); const fd=new FormData(taskForm); const opts=fd.getAll('options'); const existing=editingTask?(state.tasks.find(t=>t.id===editingTask).taskPhotos||[]):[]; const added=await readFiles(taskForm.querySelector('[name="taskPhotoFiles"]')); const item={id:editingTask||uid(),name:fd.get('name'),desc:fd.get('desc'),memberId:fd.get('memberId'),post:fd.get('post'),freq:fd.get('freq'),date:fd.get('date'),due:fd.get('due'),priority:fd.get('priority'),status:fd.get('status'),comment:'',validatedAt:'',validatedBy:'',photo:opts.includes('photo'),signature:opts.includes('signature'),attach:opts.includes('attach'),barcode:opts.includes('barcode'),taskPhotos:[...existing,...added]}; 
+taskForm.onsubmit=async e=>{e.preventDefault(); const fd=new FormData(taskForm); const opts=fd.getAll('options'); const existing=editingTask?(state.tasks.find(t=>t.id===editingTask).taskPhotos||[]):[]; const added=await readFiles(taskForm.querySelector('[name="taskPhotoFiles"]')); console.log("Fichiers sélectionnés :", taskForm.querySelector('[name="taskPhotoFiles"]').files); const uploadedUrls =
+    await uploadTaskPhotos(
+        taskForm.querySelector(
+            '[name="taskPhotoFiles"]'
+        ).files
+    ); const item={id:editingTask||uid(),name:fd.get('name'),desc:fd.get('desc'),memberId:fd.get('memberId'),post:fd.get('post'),freq:fd.get('freq'),date:fd.get('date'),due:fd.get('due'),priority:fd.get('priority'),status:fd.get('status'),comment:'',validatedAt:'',validatedBy:'',photo:opts.includes('photo'),signature:opts.includes('signature'),attach:opts.includes('attach'),barcode:opts.includes('barcode'),taskPhotos:[...existing,...added], photo_urls: uploadedUrls}; 
 if(editingTask){
 
     Object.assign(
@@ -388,6 +440,7 @@ if(editingTask){
             heure_prevue: item.due,
             priorite: item.priority,
             assignee: item.memberId,
+            photo_urls: item.photo_urls,
             completed: item.status === "réalisée"
         })
         .eq("id", item.id);
@@ -409,6 +462,7 @@ if(editingTask){
     priorite: item.priority,
     assignee: item.memberId,
     date: item.date,
+    photo_urls: item.photo_urls,
     completed: false
 });
     console.log("Insertion tâche :", error);
