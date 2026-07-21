@@ -193,7 +193,30 @@ else{
     state.schedules[item.id]=makeSchedule();
 
     log('Création membre',item.name)
-} save(); memberDialog.close(); render()}; function toggleMember(id){if(!isAdminUnlocked()){requestAdmin(); return} const m=member(id); m.active=!m.active; log(m.active?'Activation membre':'Désactivation membre',m.name); render()} async function previewProfilePhoto(input){const files=await readFiles(input); if(files[0]){memberForm.querySelector('[name="profilePhoto"]').value=files[0].data; profilePreview.innerHTML='<img class="avatar" src="'+files[0].data+'" alt="Photo de profil">'}} function removeProfilePhoto(){memberForm.querySelector('[name="profilePhoto"]').value=''; profilePreview.innerHTML='<span class="avatar">?</span>'; const file=memberForm.querySelector('[name="profilePhotoFile"]'); if(file) file.value=''}
+} save(); memberDialog.close(); render()}; async function toggleMember(id){
+    if(!isAdminUnlocked()){requestAdmin(); return}
+
+    const m = member(id);
+
+    m.active = !m.active;
+
+    const { error } = await window.sb
+        .from("Members")
+        .update({
+            Actif: m.active
+        })
+        .eq("id", id);
+
+    console.log("Modification statut membre :", error);
+
+    log(
+        m.active ? 'Activation membre' : 'Désactivation membre',
+        m.name
+    );
+
+    save();
+    render();
+} async function previewProfilePhoto(input){const files=await readFiles(input); if(files[0]){memberForm.querySelector('[name="profilePhoto"]').value=files[0].data; profilePreview.innerHTML='<img class="avatar" src="'+files[0].data+'" alt="Photo de profil">'}} function removeProfilePhoto(){memberForm.querySelector('[name="profilePhoto"]').value=''; profilePreview.innerHTML='<span class="avatar">?</span>'; const file=memberForm.querySelector('[name="profilePhotoFile"]'); if(file) file.value=''}
 function openTaskModal(id,date){if(!isAdminUnlocked()){requestAdmin(); return} editingTask=id; const defaultMember =
     state.members.length ? state.members[0].id : '';
 
