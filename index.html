@@ -29,7 +29,7 @@
 
 <button id="loginBtn" class="secondary">
 Connexion
-</button></div></div></header>
+</button><div class="field"><label class="label">Vue</label><select id="roleView"><option value="employee">Employé</option><option value="admin">Administrateur</option></select></div></div></div></header>
   <main><nav class="tabs" id="tabs"></nav>
     <section id="dashboard" class="section"><div id="adminNotice"></div><div class="grid dashboard" id="metrics"></div><div class="grid two" style="margin-top:14px"><div class="panel"><div class="toolbar"><h2>Activité du jour</h2><div class="row"><button onclick="openTaskModal()">+ Tâche</button><button class="secondary" onclick="exportReport()">Export Excel</button></div></div><div id="todayTasks" class="list"></div></div><div class="grid"><div class="panel"><h2>Membres présents</h2><div id="presenceList" class="list"></div></div><div class="panel"><h2>Alertes</h2><div id="alerts" class="list"></div></div></div></div></section>
     <section id="myday" class="section active"><div class="grid two"><div class="panel"><h2>Ma journée</h2><div id="myAttendance"></div></div><div class="panel"><h2>Mon emploi du temps</h2><div id="mySchedule"></div></div></div><div class="panel" style="margin-top:14px"><h2>Mes tâches du jour</h2><div id="myTasks" class="list"></div></div></section>
@@ -156,15 +156,7 @@ photo_urls: t.photo_urls || []
         state.schedules
     );
 }
-function save(){localStorage.setItem(storeKey,JSON.stringify(state))} function userName(id){return (state.members.find(m=>m.id===id)||{}).name||'Utilisateur'} function member(id){
-
-    return state.members.find(
-        m =>
-            String(m.id)
-            ===
-            String(id)
-    );
-} function avatarHtml(m,small=false){return m&&m.profilePhoto?'<img class="avatar '+(small?'small':'')+'" src="'+m.profilePhoto+'" alt="Photo de '+m.name+'">':'<span class="avatar '+(small?'small':'')+'">'+((m?.name||'?').trim()[0]||'?')+'</span>'} function photosHtml(task){
+function save(){localStorage.setItem(storeKey,JSON.stringify(state))} function userName(id){return (state.members.find(m=>m.id===id)||{}).name||'Utilisateur'} function member(id){return state.members.find(m=>m.id===id)} function avatarHtml(m,small=false){return m&&m.profilePhoto?'<img class="avatar '+(small?'small':'')+'" src="'+m.profilePhoto+'" alt="Photo de '+m.name+'">':'<span class="avatar '+(small?'small':'')+'">'+((m?.name||'?').trim()[0]||'?')+'</span>'} function photosHtml(task){
 
     return (task.photo_urls || []).length
         ? '<div class="photos">' +
@@ -196,22 +188,7 @@ function save(){localStorage.setItem(storeKey,JSON.stringify(state))} function u
     save();
 } function isAdminUnlocked(){return sessionStorage.getItem('adminUnlocked')==='true'} function dueLate(task){return task.status!=='réalisée'&&task.date===today()&&task.due&&task.due<nowTime()} function normalizeStatuses(){state.tasks.forEach(x=>{if(dueLate(x))x.status='en retard'}); save()}
 function requestAdmin(){const code=prompt('Code administrateur'); if(code===state.settings.adminCode){sessionStorage.setItem('adminUnlocked','true'); active='dashboard'; log('Connexion administrateur','Accès administrateur ouvert'); render()} else if(code!==null){alert('Code administrateur incorrect. Code de démonstration : 1234')}}
-function render(){
-
-    console.log("===== DEBUT RENDER =====");
-    console.log("state.members =", state.members);
-    console.log("state.currentUser =", state.currentUser);
-
-    normalizeStatuses();
-    renderUserSelect();
-    renderRole();
-    renderTabs(); document.querySelectorAll('.section').forEach(s=>s.classList.toggle('active',s.id===active)); renderDashboard();
-
-console.log("Avant renderMyDay");
-renderMyDay();
-console.log("Après renderMyDay");
-
-renderMembers(); renderSchedules(); renderWeekly(); renderTasks(); renderHistory(); renderReports()}
+function render(){normalizeStatuses(); renderUserSelect(); renderRole(); renderTabs(); document.querySelectorAll('.section').forEach(s=>s.classList.toggle('active',s.id===active)); renderDashboard(); renderMyDay(); renderMembers(); renderSchedules(); renderWeekly(); renderTasks(); renderHistory(); renderReports()}
 function renderUserSelect(){
 
     console.log(
@@ -232,9 +209,20 @@ function renderUserSelect(){
     }
 } function renderRole(){
 
-    return;
+    const savedUser =
+        JSON.parse(
+            sessionStorage.getItem(
+                "loggedUser"
+            ) || "null"
+        );
 
-} async function loginUser(username, password){
+    if(!savedUser) return;
+
+    roleView.value =
+        savedUser.role_access === "admin"
+            ? "admin"
+            : "employee";
+}async function loginUser(username, password){
 
     const { data, error } = await window.sb
         .from("Members")
@@ -263,73 +251,8 @@ function renderUserSelect(){
 function renderTabs(){const tabs=isAdminUnlocked()?[['dashboard','Tableau de bord'],['myday','Ma journée'],['weekly','Programme semaine'],['members','Membres'],['schedules','Emplois du temps'],['tasks','Tâches'],['history','Historique'],['reports','Rapports']]:[['myday','Ma journée'],['dashboard','Synthèse'],['weekly','Ma semaine']]; if(!isAdminUnlocked()&&['members','schedules','tasks','history','reports'].includes(active))active='myday'; tabsEl=tabs.map(x=>'<button class="tab '+(active===x[0]?'active':'')+'" onclick="active=\''+x[0]+'\';render()">'+x[1]+'</button>').join(''); document.getElementById('tabs').innerHTML=tabsEl}
 function metric(label,value,color){return '<div class="panel metric"><span>'+label+'</span><strong style="color:'+color+'">'+value+'</strong></div>'} function badge(status){return status==='réalisée'?'b-green':status==='en retard'?'b-red':'b-blue'}
 function taskCard(x){const admin=isAdminUnlocked(); const m=member(x.memberId); return '<div class="item priority-'+x.priority+'"><div class="item-head"><div class="member-line">'+avatarHtml(m,true)+'<div><div class="title">'+x.name+'</div><div class="meta">'+x.date+' · '+userName(x.memberId)+' · '+x.post+' · prévue '+x.due+'</div></div></div><span class="badge '+badge(x.status)+'">'+x.status+'</span></div><div class="meta">'+x.desc+'</div>'+photosHtml(x)+'<div class="actions"><button class="good" onclick="validateTask(\''+x.id+'\')" '+(x.status==='réalisée'?'disabled':'')+'>Valider</button><button class="secondary" onclick="addTaskPhotos(\''+x.id+'\')">Ajouter photo</button>'+(admin?'<button class="secondary" onclick="openTaskModal(\''+x.id+'\')">Modifier</button><button class="secondary" onclick="duplicateTask(\''+x.id+'\')">Dupliquer</button>':'')+'</div></div>'}
-function renderDashboard(){adminNotice.innerHTML=isAdminUnlocked()?'<div class="admin-lock" style="margin-bottom:12px">Accès administrateur ouvert. <button class="secondary" onclick="lockAdmin()">Verrouiller</button></div>':'; const allToday=state.tasks.filter(x=>x.date===today()); const tasks=isAdminUnlocked()?allToday:allToday.filter(x=>x.memberId===state.currentUser); const done=tasks.filter(x=>x.status==='réalisée').length; const late=tasks.filter(x=>x.status==='en retard').length; document.getElementById('metrics').innerHTML=metric('Tâches du jour',tasks.length,'var(--blue)')+metric('Réalisées',done,'var(--green)')+metric('Restantes',tasks.length-done,'var(--amber)')+metric('Retards',late,'var(--red)'); todayTasks.innerHTML=tasks.length?tasks.map(taskCard).join(''):'<div class="empty">Aucune tâche pour aujourd’hui.</div>'; presenceList.innerHTML=state.members.filter(m=>m.active).map(m=>{const a=(state.attendance[today()]||{})[m.id]||{}; const b=a.arrival&&!a.departure?'b-green':a.departure?'b-gray':'b-red'; const txt=a.arrival?(a.departure?'Parti '+a.departure:'Présent depuis '+a.arrival):'Absent'; return '<div class="item"><div class="item-head"><div class="member-line">'+avatarHtml(m,true)+'<div><div class="title">'+m.name+'</div><div class="meta">'+m.post+'</div></div></div><span class="badge '+b+'">'+txt+'</span></div></div>'}).join(''); const alerts=tasks.filter(x=>x.status==='en retard'||x.priority==='urgente'||x.priority==='importante').slice(0,8); alertsEl=alerts.length?alerts.map(x=>'<div class="item priority-'+x.priority+'"><div class="title">'+x.name+'</div><div class="meta">'+userName(x.memberId)+' · '+x.due+' · '+x.status+'</div></div>').join(''):'<div class="empty">Aucune alerte active.</div>'; document.getElementById('alerts').innerHTML=alertsEl}
-function renderMyDay(){
-
-    console.log("DEBUT renderMyDay");
-
-    const m =
-        member(state.currentUser);
-
-    console.log("m =", m);
-
-    const map =
-        state.attendance[today()] || {};
-
-    console.log("map =", map);
-
-    const a =
-        map[state.currentUser] || {};
-
-    console.log("a =", a);
-
-    const todayIndex =
-        (new Date().getDay()+6)%7;
-
-    const schedule =
-        state.schedules[state.currentUser];
-
-    console.log(
-        "schedule =",
-        schedule
-    );
-
-    const s =
-        (
-            schedule
-            ||
-            makeSchedule()
-        )[todayIndex];
-
-    console.log("s =", s);
-
-    myAttendance.innerHTML =
-        '<div class="item"><div class="member-line">'
-        + avatarHtml(m)
-        + '<div><div class="title">'
-        + m.name
-        + '</div><div class="meta">'
-        + m.post
-        + '</div></div></div></div>';
-
-    const list =
-        state.tasks.filter(
-            x =>
-                x.date===today()
-                &&
-                x.memberId===state.currentUser
-        );
-
-    console.log(
-        "list =",
-        list
-    );
-
-    myTasks.innerHTML =
-        list.length
-        ? list.map(taskCard).join('')
-        : '<div class="empty">Aucune tâche affectée aujourd’hui.</div>';
-}
+function renderDashboard(){adminNotice.innerHTML=isAdminUnlocked()?'<div class="admin-lock" style="margin-bottom:12px">Accès administrateur ouvert. <button class="secondary" onclick="lockAdmin()">Verrouiller</button></div>':'<div class="admin-lock" style="margin-bottom:12px">Vue employé. <button onclick="requestAdmin()">Déverrouiller administrateur</button></div>'; const allToday=state.tasks.filter(x=>x.date===today()); const tasks=isAdminUnlocked()?allToday:allToday.filter(x=>x.memberId===state.currentUser); const done=tasks.filter(x=>x.status==='réalisée').length; const late=tasks.filter(x=>x.status==='en retard').length; document.getElementById('metrics').innerHTML=metric('Tâches du jour',tasks.length,'var(--blue)')+metric('Réalisées',done,'var(--green)')+metric('Restantes',tasks.length-done,'var(--amber)')+metric('Retards',late,'var(--red)'); todayTasks.innerHTML=tasks.length?tasks.map(taskCard).join(''):'<div class="empty">Aucune tâche pour aujourd’hui.</div>'; presenceList.innerHTML=state.members.filter(m=>m.active).map(m=>{const a=(state.attendance[today()]||{})[m.id]||{}; const b=a.arrival&&!a.departure?'b-green':a.departure?'b-gray':'b-red'; const txt=a.arrival?(a.departure?'Parti '+a.departure:'Présent depuis '+a.arrival):'Absent'; return '<div class="item"><div class="item-head"><div class="member-line">'+avatarHtml(m,true)+'<div><div class="title">'+m.name+'</div><div class="meta">'+m.post+'</div></div></div><span class="badge '+b+'">'+txt+'</span></div></div>'}).join(''); const alerts=tasks.filter(x=>x.status==='en retard'||x.priority==='urgente'||x.priority==='importante').slice(0,8); alertsEl=alerts.length?alerts.map(x=>'<div class="item priority-'+x.priority+'"><div class="title">'+x.name+'</div><div class="meta">'+userName(x.memberId)+' · '+x.due+' · '+x.status+'</div></div>').join(''):'<div class="empty">Aucune alerte active.</div>'; document.getElementById('alerts').innerHTML=alertsEl}
+function renderMyDay(){const m=member(state.currentUser); const map=state.attendance[today()]||{}; const a=map[state.currentUser]||{}; myAttendance.innerHTML='<div class="item"><div class="member-line">'+avatarHtml(m)+'<div><div class="title">'+m.name+'</div><div class="meta">'+m.post+'</div></div></div><div class="split"><button class="good" onclick="clockIn()" '+(a.arrival?'disabled':'')+'>Pointer arrivée</button><button class="warn" onclick="clockOut()" '+(!a.arrival||a.departure?'disabled':'')+'>Pointer départ</button></div><p class="meta">Arrivée : '+(a.arrival||'non pointée')+' · Départ : '+(a.departure||'non pointé')+'</p></div>'; const todayIndex=(new Date().getDay()+6)%7; const s=(state.schedules[state.currentUser]||makeSchedule())[todayIndex]; mySchedule.innerHTML=s.work?'<div class="item"><div class="title">'+s.day+' : '+s.start+' - '+s.end+'</div><div class="meta">Pause : '+(s.break||'non renseignée')+'</div><div class="meta">'+(s.note||'')+'</div></div>':'<div class="empty">Repos prévu aujourd’hui.</div>'; const list=state.tasks.filter(x=>x.date===today()&&x.memberId===state.currentUser); myTasks.innerHTML=list.length?list.map(taskCard).join(''):'<div class="empty">Aucune tâche affectée aujourd’hui.</div>'}
 async function clockIn(){
 
     state.attendance[today()] ||= {};
@@ -692,8 +615,7 @@ function exportReport(){const rows=[['Date','Tâche','Membre','Poste','Heure pr�
     }
 
 
-    state.currentUser =
-    String(data.id);
+    state.currentUser=data.id;
 
     sessionStorage.setItem(
         "loggedUser",
@@ -721,9 +643,6 @@ function exportReport(){const rows=[['Date','Tâche','Membre','Poste','Heure pr�
 
 
     save();
-console.log("AVANT RENDER DANS LOGIN");
-console.log("members =", state.members);
-console.log("currentUser =", state.currentUser);
     render();
 
     console.log(
@@ -748,7 +667,7 @@ window.sb = window.supabase.createClient(
     SUPABASE_URL,
     SUPABASE_KEY
 );
-console.log("TEST PASDY 22-07-2026");
+
 console.log("Supabase connecté");
 console.log("VERSION TEST LOGIN");
 
