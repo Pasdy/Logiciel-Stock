@@ -189,9 +189,40 @@ function save(){localStorage.setItem(storeKey,JSON.stringify(state))} function u
 } function isAdminUnlocked(){return sessionStorage.getItem('adminUnlocked')==='true'} function dueLate(task){return task.status!=='réalisée'&&task.date===today()&&task.due&&task.due<nowTime()} function normalizeStatuses(){state.tasks.forEach(x=>{if(dueLate(x))x.status='en retard'}); save()}
 function requestAdmin(){const code=prompt('Code administrateur'); if(code===state.settings.adminCode){sessionStorage.setItem('adminUnlocked','true'); active='dashboard'; log('Connexion administrateur','Accès administrateur ouvert'); render()} else if(code!==null){alert('Code administrateur incorrect. Code de démonstration : 1234')}}
 function render(){normalizeStatuses(); renderUserSelect(); renderRole(); renderTabs(); document.querySelectorAll('.section').forEach(s=>s.classList.toggle('active',s.id===active)); renderDashboard(); renderMyDay(); renderMembers(); renderSchedules(); renderWeekly(); renderTasks(); renderHistory(); renderReports()}
-function renderUserSelect(){const sel=currentUser; const before=sel.value||state.currentUser; sel.innerHTML=state.members.filter(m=>m.active).map(m=>'<option value="'+m.id+'">'+m.name+' - '+m.post+'</option>').join(''); sel.value=before; state.currentUser=sel.value||state.currentUser}
-function renderRole(){roleView.value=isAdminUnlocked()?'admin':'employee'}
-async function loginUser(username, password){
+function renderUserSelect(){
+
+    console.log(
+        "NOUVELLE VERSION renderUserSelect"
+    );
+
+    const savedUser =
+        JSON.parse(
+            sessionStorage.getItem(
+                "loggedUser"
+            ) || "null"
+        );
+
+    if(savedUser){
+
+        state.currentUser =
+            String(savedUser.id);
+    }
+} function renderRole(){
+
+    const savedUser =
+        JSON.parse(
+            sessionStorage.getItem(
+                "loggedUser"
+            ) || "null"
+        );
+
+    if(!savedUser) return;
+
+    roleView.value =
+        savedUser.role_access === "admin"
+            ? "admin"
+            : "employee";
+}async function loginUser(username, password){
 
     const { data, error } = await window.sb
         .from("Members")
