@@ -1,691 +1,2936 @@
+<!-- TEST STABLE PASDY -->
 <!doctype html>
 <html lang="fr">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Suivi Stock & Économat</title>
-  <style>
-    :root{--bg:#f6f7f9;--surface:#fff;--ink:#1d2430;--muted:#657085;--line:#dfe4ec;--green:#168a5a;--red:#c43d3d;--amber:#b7791f;--blue:#2563a8;--teal:#0f766e;--dark:#263241;--soft-green:#e8f6ef;--soft-red:#fdecec;--soft-amber:#fff4dc;--soft-blue:#eaf2fb;--shadow:0 10px 28px rgba(31,41,55,.08);--radius:8px}
-    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;font-size:15px;line-height:1.45;letter-spacing:0} button,input,select,textarea{font:inherit} button{cursor:pointer;border:0;border-radius:7px;padding:10px 12px;background:var(--dark);color:#fff;min-height:40px} button.secondary{background:#e9edf3;color:var(--ink)} button.good{background:var(--green)} button.warn{background:var(--amber)} button.danger{background:var(--red)} button.icon{width:40px;padding:0;display:inline-grid;place-items:center} button:disabled{opacity:.45;cursor:not-allowed} input,select,textarea{width:100%;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:7px;padding:10px 11px;min-height:40px} textarea{min-height:74px;resize:vertical}.label{font-size:12px;color:var(--muted);font-weight:700;margin:0 0 6px}.field{display:grid;gap:6px}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.split{display:grid;grid-template-columns:1fr 1fr;gap:12px}.hide{display:none!important}
-    header{position:sticky;top:0;z-index:4;background:rgba(246,247,249,.94);border-bottom:1px solid var(--line);backdrop-filter:blur(10px)}.topbar{max-width:1360px;margin:auto;padding:14px 18px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center}.brand{display:flex;gap:12px;align-items:center}.mark{width:42px;height:42px;border-radius:8px;background:linear-gradient(135deg,var(--green),var(--blue));display:grid;place-items:center;color:#fff;font-weight:900}.brand h1{font-size:20px;margin:0}.brand p{margin:2px 0 0;color:var(--muted);font-size:13px}.session{display:flex;gap:8px;align-items:end}.session select{min-width:190px}
-    main{max-width:1360px;margin:auto;padding:18px}.tabs{display:flex;gap:8px;overflow:auto;padding-bottom:10px}.tab{background:#e9edf3;color:var(--ink);white-space:nowrap}.tab.active{background:var(--dark);color:#fff}.section{display:none}.section.active{display:block}.grid{display:grid;gap:14px}.dashboard{grid-template-columns:repeat(4,minmax(0,1fr))}.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:15px}.panel h2,.panel h3{margin:0 0 12px}.panel h2{font-size:18px}.panel h3{font-size:15px}.metric{display:grid;gap:8px}.metric strong{font-size:30px}.metric span{color:var(--muted);font-size:13px}.two{grid-template-columns:1.15fr .85fr}.three{grid-template-columns:repeat(3,1fr)}.week-grid{display:grid;grid-template-columns:repeat(7,minmax(150px,1fr));gap:10px;overflow:auto;padding-bottom:6px}.day-col{min-width:150px;border:1px solid var(--line);border-radius:8px;background:#fbfcfe;padding:10px}.day-col h3{font-size:13px;margin:0 0 8px}.mini-task{border:1px solid var(--line);border-radius:7px;background:white;padding:8px;margin-bottom:7px;font-size:13px}.mini-task b{display:block}.mini-task span{color:var(--muted)}
-    .list{display:grid;gap:10px}.item{border:1px solid var(--line);border-radius:8px;background:#fff;padding:12px;display:grid;gap:8px}.item-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.title{font-weight:800}.meta{color:var(--muted);font-size:13px}.badge{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:4px 8px;font-size:12px;font-weight:800}.b-green{background:var(--soft-green);color:var(--green)}.b-red{background:var(--soft-red);color:var(--red)}.b-amber{background:var(--soft-amber);color:var(--amber)}.b-blue{background:var(--soft-blue);color:var(--blue)}.b-gray{background:#eef1f5;color:#4b5563}.priority-urgente{border-left:5px solid var(--red)}.priority-importante{border-left:5px solid var(--amber)}.priority-normale{border-left:5px solid var(--blue)}.priority-faible{border-left:5px solid var(--teal)}.avatar{width:42px;height:42px;border-radius:50%;object-fit:cover;background:#dfe7ef;display:inline-grid;place-items:center;color:#526175;font-weight:800;flex:0 0 auto}.avatar.small{width:32px;height:32px}.member-line{display:flex;gap:10px;align-items:center}.photos{display:flex;gap:8px;flex-wrap:wrap}.task-photo{width:86px;height:64px;border-radius:7px;object-fit:cover;border:1px solid var(--line);background:#eef1f5}.profile-preview{display:flex;gap:12px;align-items:center;padding:10px;border:1px dashed var(--line);border-radius:8px;background:#fbfcfe}
-    table{width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:hidden} th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top} th{font-size:12px;color:var(--muted);background:#f1f4f8;text-transform:uppercase}.actions{display:flex;gap:7px;flex-wrap:wrap}.empty{border:1px dashed #cbd5e1;border-radius:8px;padding:20px;text-align:center;color:var(--muted);background:#fbfcfe}.toolbar{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap}.toolbar .row{flex:1}.toolbar input,.toolbar select{max-width:230px}.notice{padding:10px 12px;border-radius:8px;background:var(--soft-amber);color:#744c0b}.admin-lock{background:var(--soft-blue);border:1px solid #c5d8ef;color:#173d67;border-radius:8px;padding:10px 12px}
-    dialog{border:0;border-radius:10px;padding:0;width:min(760px,calc(100vw - 24px));box-shadow:0 25px 80px rgba(0,0,0,.24)} dialog::backdrop{background:rgba(15,23,42,.45)}.modal{padding:18px}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.modal-head h2{margin:0;font-size:18px}.close{background:#edf1f6;color:#1f2937}.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.full{grid-column:1/-1}.right{justify-content:flex-end}
-    @media(max-width:900px){.topbar{grid-template-columns:1fr}.session{align-items:stretch}.session select{min-width:0}.dashboard,.two,.three,.split,.form-grid{grid-template-columns:1fr}.toolbar input,.toolbar select{max-width:none}.item-head{display:grid}.brand h1{font-size:18px} main{padding:12px}.panel{padding:12px} th:nth-child(3),td:nth-child(3){display:none}.week-grid{grid-template-columns:1fr;overflow:visible}.day-col{min-width:0}}
-    @media print{header,.tabs,.toolbar,button,dialog{display:none!important} body{background:#fff}.section{display:block}.panel{box-shadow:none;border:1px solid #bbb}}
-  </style>
-</head>
-<body>
-  <header><div class="topbar"><div class="brand"><div class="mark">ST</div><div><h1>Suivi Stock & Économat</h1><p>Pointage, tâches journalières, emplois du temps et rapports</p></div></div><div class="session"><div class="field">
-<label class="label">Utilisateur</label>
-<input id="loginUsername" placeholder="Nom utilisateur">
-</div>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Suivi Stock & Économat</title>
+    <style>
+      :root {
+  --bg: #F5F8FC;
+  --surface: #FFFFFF;
+  --ink: #1F2937;
+  --muted: #64748B;
+  --line: #D9E6F5;
 
-<div class="field">
-<label class="label">Mot de passe</label>
-<input id="loginPassword" type="password" placeholder="Mot de passe">
-</div>
+  --green: #168A5A;
+  --red: #C43D3D;
+  --amber: #B7791F;
 
-<button id="loginBtn" class="secondary">
-Connexion
-</button><div class="field"><label class="label">Vue</label><select id="roleView"><option value="employee">Employé</option><option value="admin">Administrateur</option></select></div></div></div></header>
-  <main><nav class="tabs" id="tabs"></nav>
-    <section id="dashboard" class="section"><div id="adminNotice"></div><div class="grid dashboard" id="metrics"></div><div class="grid two" style="margin-top:14px"><div class="panel"><div class="toolbar"><h2>Activité du jour</h2><div class="row"><button onclick="openTaskModal()">+ Tâche</button><button class="secondary" onclick="exportReport()">Export Excel</button></div></div><div id="todayTasks" class="list"></div></div><div class="grid"><div class="panel"><h2>Membres présents</h2><div id="presenceList" class="list"></div></div><div class="panel"><h2>Alertes</h2><div id="alerts" class="list"></div></div></div></div></section>
-    <section id="myday" class="section active"><div class="grid two"><div class="panel"><h2>Ma journée</h2><div id="myAttendance"></div></div><div class="panel"><h2>Mon emploi du temps</h2><div id="mySchedule"></div></div></div><div class="panel" style="margin-top:14px"><h2>Mes tâches du jour</h2><div id="myTasks" class="list"></div></div></section>
-    <section id="weekly" class="section"><div class="panel"><div class="toolbar"><h2>Programme hebdomadaire</h2><div class="row"><button class="secondary" onclick="shiftWeek(-7)">Semaine précédente</button><input id="weekPicker" type="date" onchange="setWeekFromInput(this.value)"><button class="secondary" onclick="shiftWeek(7)">Semaine suivante</button><button onclick="openTaskModal(null, selectedWeekStart)">+ Programmer une tâche</button><button class="secondary" onclick="duplicateWeek()">Dupliquer la semaine</button></div></div><div class="notice" style="margin-bottom:12px">Prépare le programme le dimanche, jour par jour, pour chaque membre. Chaque tâche est liée à une date précise.</div><div id="weekBoard" class="week-grid"></div></div></section>
-    <section id="members" class="section"><div class="panel"><div class="toolbar"><h2>Membres</h2><button onclick="openMemberModal()">+ Membre</button></div><div id="memberTable"></div></div></section>
-    <section id="schedules" class="section"><div class="panel"><div class="toolbar"><h2>Emplois du temps</h2><button onclick="openScheduleModal()">Modifier un emploi du temps</button></div><div id="scheduleTable"></div></div></section>
-    <section id="tasks" class="section"><div class="panel"><div class="toolbar"><h2>Gestion des tâches</h2><div class="row"><input id="taskSearch" placeholder="Rechercher une tâche" oninput="render()"><select id="taskFilter" onchange="render()"><option value="all">Tous statuts</option><option value="a faire">À faire</option><option value="en retard">En retard</option><option value="réalisée">Réalisée</option></select><button onclick="openTaskModal()">+ Tâche</button></div></div><div id="taskTable"></div></div></section>
-    <section id="history" class="section"><div class="panel"><div class="toolbar"><h2>Historique</h2><div class="row"><input id="historySearch" placeholder="Date, membre, tâche" oninput="renderHistory()"><button class="secondary" onclick="changeAdminCode()">Code admin</button><button class="secondary" onclick="clearDemo()">Réinitialiser démo</button></div></div><div id="historyTable"></div></div></section>
-    <section id="reports" class="section"><div class="grid two"><div class="panel"><h2>Rapports</h2><p class="meta">Les rapports reprennent les tâches, retards, présences, validations et programmes hebdomadaires.</p><div class="actions"><button onclick="print()">Rapport PDF</button><button class="secondary" onclick="exportReport()">Export Excel</button><button class="secondary" onclick="exportJson()">Sauvegarde JSON</button></div></div><div class="panel"><h2>Statistiques</h2><div id="stats"></div></div></div></section>
-  </main>
-  <dialog id="memberDialog"><div class="modal"><div class="modal-head"><h2>Membre</h2><button class="close icon" onclick="memberDialog.close()">×</button></div><form id="memberForm" class="form-grid"></form></div></dialog>
-  <dialog id="taskDialog"><div class="modal"><div class="modal-head"><h2>Tâche journalière</h2><button class="close icon" onclick="taskDialog.close()">×</button></div><form id="taskForm" class="form-grid"></form></div></dialog>
-  <dialog id="scheduleDialog"><div class="modal"><div class="modal-head"><h2>Emploi du temps</h2><button class="close icon" onclick="scheduleDialog.close()">×</button></div><form id="scheduleForm" class="form-grid"></form></div></dialog>
-<script>
-const storeKey='stockEconomatAppV2'; const oldKey='stockEconomatAppV1'; const dayNames=['Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi','Dimanche']; const posts=['Magasinier chef','Magasinier adjoint','Production','Réception','Rangement','Inventaire','Employé polyvalent'];
-const today=()=>new Date().toISOString().slice(0,10); const nowTime=()=>new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}); const uid=()=>Math.random().toString(36).slice(2,9); const addDays=(iso,n)=>{const d=new Date(iso+'T00:00:00'); d.setDate(d.getDate()+n); return d.toISOString().slice(0,10)}; const mondayOf=(iso)=>{const d=new Date(iso+'T00:00:00'); const day=(d.getDay()+6)%7; d.setDate(d.getDate()-day); return d.toISOString().slice(0,10)};
-let state=load();
+  --blue: #4A90E2;
+  --blue-dark: #1565C0;
 
-const savedUser =
-    sessionStorage.getItem('loggedUser');
+  --teal: #4A90E2;
+  --dark: #1565C0;
 
-if(savedUser){
-    state.loggedUser = JSON.parse(savedUser);
-} 
-let active=sessionStorage.getItem('adminUnlocked')==='true'?'dashboard':'myday'; let editingMember=null, editingTask=null; let selectedWeekStart=mondayOf(today());
-function makeSchedule(){return dayNames.map((d,i)=>({day:d,work:i<6,start:i<5?'08:00':'08:00',end:i<5?'17:00':'13:00',break:'12:00-13:00',note:i===6?'Repos':''}))}
-function t(name,desc,memberId,post,freq,due,priority,photo=false,signature=false,attach=false,barcode=false,date=today()){return {id:uid(),name,desc,memberId,post,freq,due,priority,status:'a faire',date,comment:'',photo,signature,attach,barcode,validatedAt:'',validatedBy:'',taskPhotos:[]}}
-function seed(){const members=[{id:'m1',name:'Membre 1',post:'Magasinier chef',role:'admin',active:true,phone:'',email:'',profilePhoto:''},{id:'m2',name:'Membre 2',post:'Magasinier adjoint',role:'employee',active:true,phone:'',email:'',profilePhoto:''},{id:'m3',name:'Membre 3',post:'Production',role:'employee',active:true,phone:'',email:'',profilePhoto:''},{id:'m4',name:'Membre 4',post:'Réception',role:'employee',active:true,phone:'',email:'',profilePhoto:''}]; const tasks=[t('Contrôle ouverture économat','Vérifier accès, propreté et sécurité de la zone.','m1','Magasinier chef','journalière','08:00','importante'),t('Réception marchandises','Contrôler les produits reçus et joindre le bon de livraison.','m4','Réception','journalière','09:00','urgente',true,false,true,true),t('Rangement zone stock','Ranger les produits selon les emplacements prévus.','m2','Magasinier adjoint','journalière','10:30','normale',true),t('Préparation production','Sortir les produits nécessaires à la production.','m3','Production','journalière','11:00','importante'),t('Inventaire rapide','Contrôler les écarts sur les produits sensibles.','m1','Inventaire','hebdomadaire','15:00','importante',false,true,false,true),t('Clôture journée','Vérifier tâches restantes et anomalies.','m1','Magasinier chef','journalière','17:00','normale')]; const schedules={}; members.forEach(m=>schedules[m.id]=makeSchedule()); return {version:2,settings:{adminCode:'1234'},members,tasks,attendance:{},logs:[],schedules,currentUser:'m1'} }
-function migrate(s){if(!s)return seed(); s.version=2; s.settings ||= {adminCode:'1234'}; s.settings.adminCode ||= '1234'; s.attendance ||= {}; s.logs ||= []; s.schedules ||= {}; s.members ||= []; s.tasks ||= []; s.members.forEach(m=>{m.active = m.active!==false; m.role ||= m.id==='m1'?'admin':'employee'; m.post ||= 'Employé polyvalent'; m.profilePhoto ||= ''; if(!s.schedules[m.id]) s.schedules[m.id]=makeSchedule()}); s.tasks.forEach(x=>{x.date ||= today(); x.freq = x.freq==='quotidienne'?'journalière':(x.freq||'journalière'); x.status ||= 'a faire'; x.priority ||= 'normale'; x.taskPhotos ||= []}); return s}
-function load(){try{return migrate(JSON.parse(localStorage.getItem(storeKey))||JSON.parse(localStorage.getItem(oldKey))||seed())}catch(e){return seed()}} async function loadMembersFromSupabase(){
+  --soft-green: #E8F6EF;
+  --soft-red: #FDECEC;
+  --soft-amber: #FFF4DC;
+  --soft-blue: #EAF3FF;
 
-    console.log("Fonction loadMembersFromSupabase lancée");
-
-    const { data, error } = await window.sb
-        .from("Members")
-        .select("*");
-
-    if(error){
-        console.log("Erreur chargement membres :", error);
-        return;
-    }
-
-    state.members = data.map(m => ({
-        id: String(m.id),
-        name: m.Nom,
-        post: m.Poste,
-        role: m.Role === "Administrateur"
-            ? "admin"
-            : "employee",
-        phone: m.Telephone || "",
-        active: m.Actif
-    }));
-
-    console.log(
-        "Membres chargés depuis Supabase :",
-        state.members
-    );
+  --shadow: 0 8px 25px rgba(21,101,192,0.08);
+  --radius: 14px;
+}
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family:
+  Inter,
+  "Segoe UI",
+  Roboto,
+  Arial,
+  sans-serif;
+        font-size: 15px;
+        line-height: 1.45;
+        letter-spacing: 0;
+      }
+      button,
+      input,
+      select,
+      textarea {
+        font: inherit;
+      }
+      button {
+        cursor: pointer;
+        border: 0;
+        border-radius: 7px;
+        padding: 10px 12px;
+        background: var(--dark);
+        color: #fff;
+        min-height: 40px;
+      }
+      button.secondary {
+        background: #e9edf3;
+        color: var(--ink);
+      }
+      button.good {
+  background: var(--blue);
+  color: white;
+}
+      button.warn {
+  background: var(--soft-blue);
+  color: var(--blue);
+  border: 1px solid #b7d6f5;
+}
+      button.danger {
+        background: var(--red);
+      }
+      button.icon {
+        width: 40px;
+        padding: 0;
+        display: inline-grid;
+        place-items: center;
+      }
+      button:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+      input,
+      select,
+      textarea {
+        width: 100%;
+        border: 1px solid var(--line);
+        background: #fff;
+        color: var(--ink);
+        border-radius: 7px;
+        padding: 10px 11px;
+        min-height: 40px;
+      }
+      textarea {
+        min-height: 74px;
+        resize: vertical;
+      }
+      .label {
+        font-size: 12px;
+        color: var(--muted);
+        font-weight: 700;
+        margin: 0 0 6px;
+      }
+      .field {
+        display: grid;
+        gap: 6px;
+      }
+      .row {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .split {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      .hide {
+        display: none !important;
+      }
+      header {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  background: rgba(255,255,255,0.92);
+  border-bottom: 1px solid var(--line);
+  backdrop-filter: blur(12px);
+}
+      .topbar {
+  max-width: 1200px;
+  margin: auto;
+  padding: 40px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 35px;
+  align-items: center;
+}
+      .brand {
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  align-items:center;
+  text-align:center;
+}
+      .mark {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  background: var(--blue);
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-weight: 900;
+  font-size: 18px;
+}
+      .brand h1 {
+  font-size: 22px;
+  margin: 0;
+  color: var(--blue);
+  font-weight: 800;
+}
+      .brand p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+      .session {
+  display: flex;
+  gap: 12px;
+  align-items: end;
+}
+.login-box {
+  width:100%;
+  max-width:420px;
+  background:var(--surface);
+  padding:35px;
+  border-radius:20px;
+  box-shadow:var(--shadow);
+  border:1px solid var(--line);
+}
+.login-box input {
+  width:100%;
+  height:48px;
+  border-radius:10px;
+  border:1px solid var(--line);
+  padding:0 14px;
+}
+.login-box button {
+  width:100%;
+  height:48px;
+  margin-top:15px;
+  background:var(--blue);
+  font-weight:700;
+}
+      .session select {
+        min-width: 190px;
+      }
+      main {
+        max-width: 1360px;
+        margin: auto;
+        padding: 18px;
+      }
+      .tabs {
+        display: flex;
+        gap: 8px;
+        overflow: auto;
+        padding-bottom: 10px;
+      }
+      .menu-btn {
+  display: block;
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1100;
+  background: var(--blue);
+  color: white;
+  font-size: 22px;
+  width: 45px;
+  height: 45px;
+  border-radius: 10px;
+}
+.side-menu {
+  position: fixed;
+  top: 0;
+  left: -280px;
+  width: 280px;
+  height: 100vh;
+  background: white;
+  border-right: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  padding: 80px 20px 20px;
+  z-index: 1000;
+  transition: 0.3s ease;
+}
+#menuOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.25);
+  display: none;
+  z-index: 900;
 }
 
-async function loadTasksFromSupabase(){
+#menuOverlay.open {
+  display: block;
+}
+.side-menu.open {
+  left: 0;
+}
+.menu-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--blue);
+  margin-bottom: 25px;
+}
+.menu-title span {
+  font-size: 14px;
+  color: var(--muted);
+  font-weight: 500;
+}
+      .tab {
+  background: transparent;
+  color: var(--ink);
+  white-space: nowrap;
+  width: 100%;
+  text-align: left;
+  border-radius: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 14px 8px;
+}
 
-    console.log("Chargement tâches Supabase");
+.tab.active {
+  background: transparent;
+  color: var(--blue);
+  font-weight: 700;
+}
+      .section {
+        display: none;
+      }
+      .section.active {
+        display: block;
+      }
+      .grid {
+        display: grid;
+        gap: 14px;
+      }
+      .dashboard {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+      .panel {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 15px;
+      }
+      .panel h2,
+      .panel h3 {
+        margin: 0 0 12px;
+      }
+      .panel h2 {
+        font-size: 18px;
+      }
+      .panel h3 {
+        font-size: 15px;
+      }
+      .metric {
+        display: grid;
+        gap: 8px;
+      }
+      .metric strong {
+        font-size: 30px;
+      }
+      .metric span {
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .two {
+        grid-template-columns: 1.15fr 0.85fr;
+      }
+      .three {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .week-grid {
+        display: grid;
+        grid-template-columns: repeat(7, minmax(150px, 1fr));
+        gap: 10px;
+        overflow: auto;
+        padding-bottom: 6px;
+      }
+      .day-col {
+        min-width: 150px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fbfcfe;
+        padding: 10px;
+      }
+      .day-col h3 {
+        font-size: 13px;
+        margin: 0 0 8px;
+      }
+      .mini-task {
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        background: white;
+        padding: 8px;
+        margin-bottom: 7px;
+        font-size: 13px;
+      }
+      .mini-task b {
+        display: block;
+      }
+      .mini-task span {
+        color: var(--muted);
+      }
+      .list {
+        display: grid;
+        gap: 10px;
+      }
+      .item {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+        padding: 12px;
+        display: grid;
+        gap: 8px;
+      }
+      .item-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        align-items: flex-start;
+      }
+      .title {
+        font-weight: 800;
+      }
+      .meta {
+        color: var(--muted);
+        font-size: 13px;
+      }
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        border-radius: 999px;
+        padding: 4px 8px;
+        font-size: 12px;
+        font-weight: 800;
+      }
+      .b-green {
+        background: var(--soft-green);
+        color: var(--green);
+      }
+      .b-red {
+        background: var(--soft-red);
+        color: var(--red);
+      }
+      .b-amber {
+        background: var(--soft-amber);
+        color: var(--amber);
+      }
+      .b-blue {
+        background: var(--soft-blue);
+        color: var(--blue);
+      }
+      .b-gray {
+        background: #eef1f5;
+        color: #4b5563;
+      }
+      .priority-urgente {
+        border-left: 5px solid var(--red);
+      }
+      .priority-importante {
+        border-left: 5px solid var(--amber);
+      }
+      .priority-normale {
+        border-left: 5px solid var(--blue);
+      }
+      .priority-faible {
+        border-left: 5px solid var(--teal);
+      }
+      .avatar {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        object-fit: cover;
+        background: #dfe7ef;
+        display: inline-grid;
+        place-items: center;
+        color: #526175;
+        font-weight: 800;
+        flex: 0 0 auto;
+      }
+      .avatar.small {
+        width: 32px;
+        height: 32px;
+      }
+      .member-line {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      .photos {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .task-photo {
+        width: 86px;
+        height: 64px;
+        border-radius: 7px;
+        object-fit: cover;
+        border: 1px solid var(--line);
+        background: #eef1f5;
+      }
+      .profile-preview {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        padding: 10px;
+        border: 1px dashed var(--line);
+        border-radius: 8px;
+        background: #fbfcfe;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+      th,
+      td {
+        padding: 10px;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        vertical-align: top;
+      }
+      th {
+        font-size: 12px;
+        color: var(--muted);
+        background: #f1f4f8;
+        text-transform: uppercase;
+      }
+      .actions {
+        display: flex;
+        gap: 7px;
+        flex-wrap: wrap;
+      }
+      .empty {
+        border: 1px dashed #cbd5e1;
+        border-radius: 8px;
+        padding: 20px;
+        text-align: center;
+        color: var(--muted);
+        background: #fbfcfe;
+      }
+      .toolbar {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 12px;
+        flex-wrap: wrap;
+      }
+      .toolbar .row {
+        flex: 1;
+      }
+      .toolbar input,
+      .toolbar select {
+        max-width: 230px;
+      }
+      .notice {
+        padding: 10px 12px;
+        border-radius: 8px;
+        background: var(--soft-amber);
+        color: #744c0b;
+      }
+      .admin-lock {
+        background: var(--soft-blue);
+        border: 1px solid #c5d8ef;
+        color: #173d67;
+        border-radius: 8px;
+        padding: 10px 12px;
+      }
+      dialog {
+        border: 0;
+        border-radius: 10px;
+        padding: 0;
+        width: min(760px, calc(100vw - 24px));
+        box-shadow: 0 25px 80px rgba(0, 0, 0, 0.24);
+      }
+      dialog::backdrop {
+        background: rgba(15, 23, 42, 0.45);
+      }
+      .modal {
+        padding: 18px;
+      }
+      .modal-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 14px;
+      }
+      .modal-head h2 {
+        margin: 0;
+        font-size: 18px;
+      }
+      .close {
+        background: #edf1f6;
+        color: #1f2937;
+      }
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+      .full {
+        grid-column: 1/-1;
+      }
+      .right {
+        justify-content: flex-end;
+      }
+      .profile-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  background: white;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+}
+.admin-cards{
 
-    const { data, error } = await window.sb
-        .from("Tasks")
-        .select("*");
+display:grid;
 
-    if(error){
-        console.log(
-            "Erreur chargement tâches :",
-            error
-        );
-        return;
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+
+gap:16px;
+
+margin-top:20px;
+
+}
+
+.admin-card{
+
+background:white;
+
+border:1px solid var(--line);
+
+border-radius:14px;
+
+padding:20px;
+
+box-shadow:var(--shadow);
+
+text-align:center;
+
+transition:.25s;
+
+}
+
+.admin-card:hover{
+
+transform:translateY(-3px);
+
+}
+
+.admin-icon{
+
+font-size:34px;
+
+margin-bottom:10px;
+
+}
+
+.admin-card h3{
+
+margin:0;
+
+font-size:15px;
+
+font-weight:700;
+
+color:var(--muted);
+
+}
+
+.admin-card strong{
+
+display:block;
+
+margin-top:8px;
+
+font-size:34px;
+
+color:var(--blue);
+
+}
+.profile-photo {
+  width: 90px;
+  height: 90px;
+  border-radius: 12px;
+  background: var(--blue);
+  color: white;
+  display: grid;
+  place-items: center;
+  font-size: 36px;
+  font-weight: 800;
+}
+
+.profile-info h2 {
+  margin: 0 0 6px;
+  font-size: 24px;
+}
+
+.profile-info p {
+  margin: 0 0 5px;
+  font-weight: 700;
+  color: var(--blue);
+}
+
+.profile-info span {
+  color: var(--muted);
+  font-size: 14px;
+}
+      @media (max-width: 900px) {.menu-btn {
+  display: block;
+}
+
+.tabs {
+  display: none;
+}
+        .topbar {
+          grid-template-columns: 1fr;
+        }
+        .session {
+          align-items: stretch;
+        }
+        .session select {
+          min-width: 0;
+        }
+        .dashboard,
+        .two,
+        .three,
+        .split,
+        .form-grid {
+          grid-template-columns: 1fr;
+        }
+        .toolbar input,
+        .toolbar select {
+          max-width: none;
+        }
+        .item-head {
+          display: grid;
+        }
+        .brand h1 {
+          font-size: 18px;
+        }
+        main {
+          padding: 12px;
+        }
+        .panel {
+          padding: 12px;
+        }
+        th:nth-child(3),
+        td:nth-child(3) {
+          display: none;
+        }
+        .week-grid {
+          grid-template-columns: 1fr;
+          overflow: visible;
+        }
+        .day-col {
+          min-width: 0;
+        }
+      }
+      @media print {
+        header,
+        .tabs,
+        .toolbar,
+        button,
+        dialog {
+          display: none !important;
+        }
+        body {
+          background: #fff;
+        }
+        .section {
+          display: block;
+        }
+        .panel {
+          box-shadow: none;
+          border: 1px solid #bbb;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header id="loginHeader">
+      <div class="topbar">
+        <div class="brand">
+          <div class="mark">ST</div>
+          <div>
+            <h1>Suivi Stock & Économat</h1>
+            <p>Pointage, tâches journalières, emplois du temps et rapports</p>
+          </div>
+        </div>
+        <div class="login-box">
+        <div class="session">
+          <div class="field">
+            <label class="label">Utilisateur</label>
+            <input id="loginUsername" placeholder="Nom utilisateur" />
+          </div>
+
+          <div class="field">
+            <label class="label">Mot de passe</label>
+            <input
+              id="loginPassword"
+              type="password"
+              placeholder="Mot de passe"
+            />
+          </div>
+
+          <button id="loginBtn" class="secondary">Connexion</button>
+         
+        </div>
+        </div>
+      </div>
+    </header>
+    <main id="appMain">
+      <button id="menuBtn" class="menu-btn">☰</button>
+
+<nav class="side-menu" id="sideMenu">
+  <div class="menu-title">
+    Économat<br>
+    <span>Cercle de l'Union</span>
+  </div>
+
+  <div id="tabs"></div>
+</nav>
+
+<div id="menuOverlay"></div>
+<section id="home" class="section active">
+
+  <div class="panel">
+
+    <div id="homeContent">
+
+  <div class="profile-card">
+
+    <div class="profile-photo">
+      A
+    </div>
+
+    <div class="profile-info">
+  <h2 id="homeName"></h2>
+  <p id="homePost"></p>
+  <span>Économat - Cercle de l'Union</span>
+</div>
+
+  </div>
+
+</div>
+
+  </div>
+
+</section>
+      <section id="dashboard" class="section">
+        <div id="adminNotice"></div>
+        <div class="grid dashboard" id="metrics"></div>
+        <div class="grid two" style="margin-top: 14px">
+          <div class="panel">
+            <div class="toolbar">
+              <h2>Activité du jour</h2>
+              <div class="row">
+                <button onclick="openTaskModal()">+ Tâche</button
+                ><button class="secondary" onclick="exportReport()">
+                  Export Excel
+                </button>
+              </div>
+            </div>
+            <div id="todayTasks" class="list"></div>
+          </div>
+          <div class="grid">
+            <div class="panel">
+              <h2>Membres présents</h2>
+              <div id="presenceList" class="list"></div>
+            </div>
+            <div class="panel">
+              <h2>Alertes</h2>
+              <div id="alerts" class="list"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section id="myday" class="section active">
+        <div class="grid two">
+          <div class="panel">
+            <h2>Ma journée</h2>
+            <div id="myAttendance"></div>
+          </div>
+          <div class="panel">
+            <h2>Mon emploi du temps</h2>
+            <div id="mySchedule"></div>
+          </div>
+        </div>
+        <div class="panel" style="margin-top: 14px">
+          <h2>Mes tâches du jour</h2>
+          <div id="myTasks" class="list"></div>
+        </div>
+      </section>
+      <section id="weekly" class="section">
+        <div class="panel">
+          <div class="toolbar">
+            <h2>Programme hebdomadaire</h2>
+            <div class="row">
+              <button class="secondary" onclick="shiftWeek(-7)">
+                Semaine précédente</button
+              ><input
+                id="weekPicker"
+                type="date"
+                onchange="setWeekFromInput(this.value)"
+              /><button class="secondary" onclick="shiftWeek(7)">
+                Semaine suivante</button
+              ><button onclick="openTaskModal(null, selectedWeekStart)">
+                + Programmer une tâche</button
+              ><button class="secondary" onclick="duplicateWeek()">
+                Dupliquer la semaine
+              </button>
+            </div>
+          </div>
+          <div class="notice" style="margin-bottom: 12px">
+            Prépare le programme le dimanche, jour par jour, pour chaque membre.
+            Chaque tâche est liée à une date précise.
+          </div>
+          <div id="weekBoard" class="week-grid"></div>
+        </div>
+      </section>
+      <section id="members" class="section">
+        <div class="panel">
+          <div class="toolbar">
+            <h2>Membres</h2>
+            <button onclick="openMemberModal()">+ Membre</button>
+          </div>
+          <div id="memberTable"></div>
+        </div>
+      </section>
+      <section id="schedules" class="section">
+        <div class="panel">
+          <div class="toolbar">
+            <h2>Emplois du temps</h2>
+            <button onclick="openScheduleModal()">
+              Modifier un emploi du temps
+            </button>
+          </div>
+          <div id="scheduleTable"></div>
+        </div>
+      </section>
+      <section id="tasks" class="section">
+        <div class="panel">
+          <div class="toolbar">
+            <h2>Gestion des tâches</h2>
+            <div class="row">
+              <input
+                id="taskSearch"
+                placeholder="Rechercher une tâche"
+                oninput="render()"
+              /><select id="taskFilter" onchange="render()">
+                <option value="all">Tous statuts</option>
+                <option value="a faire">À faire</option>
+                <option value="en retard">En retard</option>
+                <option value="réalisée">Réalisée</option></select
+              ><button onclick="openTaskModal()">+ Tâche</button>
+            </div>
+          </div>
+          <div id="taskTable"></div>
+        </div>
+      </section>
+      <section id="history" class="section">
+        <div class="panel">
+          <div class="toolbar">
+            <h2>Historique</h2>
+            <div class="row">
+              <input
+                id="historySearch"
+                placeholder="Date, membre, tâche"
+                oninput="renderHistory()"
+              /><button class="secondary" onclick="changeAdminCode()">
+                Code admin</button
+              ><button class="secondary" onclick="clearDemo()">
+                Réinitialiser démo
+              </button>
+            </div>
+          </div>
+          <div id="historyTable"></div>
+        </div>
+      </section>
+      <section id="reports" class="section">
+        <div class="grid two">
+          <div class="panel">
+            <h2>Rapports</h2>
+            <p class="meta">
+              Les rapports reprennent les tâches, retards, présences,
+              validations et programmes hebdomadaires.
+            </p>
+            <div class="actions">
+              <button onclick="print()">Rapport PDF</button
+              ><button class="secondary" onclick="exportReport()">
+                Export Excel</button
+              ><button class="secondary" onclick="exportJson()">
+                Sauvegarde JSON
+              </button>
+            </div>
+          </div>
+          <div class="panel">
+            <h2>Statistiques</h2>
+            <div id="stats"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <dialog id="memberDialog">
+      <div class="modal">
+        <div class="modal-head">
+          <h2>Membre</h2>
+          <button class="close icon" onclick="memberDialog.close()">×</button>
+        </div>
+        <form id="memberForm" class="form-grid"></form>
+      </div>
+    </dialog>
+    <dialog id="taskDialog">
+      <div class="modal">
+        <div class="modal-head">
+          <h2>Tâche journalière</h2>
+          <button class="close icon" onclick="taskDialog.close()">×</button>
+        </div>
+        <form id="taskForm" class="form-grid"></form>
+      </div>
+    </dialog>
+    <dialog id="scheduleDialog">
+      <div class="modal">
+        <div class="modal-head">
+          <h2>Emploi du temps</h2>
+          <button class="close icon" onclick="scheduleDialog.close()">×</button>
+        </div>
+        <form id="scheduleForm" class="form-grid"></form>
+      </div>
+    </dialog>
+    <script>
+      const storeKey = "stockEconomatAppV2";
+      const oldKey = "stockEconomatAppV1";
+      const dayNames = [
+        "Lundi",
+        "Mardi",
+        "Mercredi",
+        "Jeudi",
+        "Vendredi",
+        "Samedi",
+        "Dimanche",
+      ];
+      const posts = [
+        "Magasinier chef",
+        "Magasinier adjoint",
+        "Production",
+        "Réception",
+        "Rangement",
+        "Inventaire",
+        "Employé polyvalent",
+      ];
+      /* ===========================
+   MODE DÉVELOPPEMENT
+=========================== */
+
+const DEV_MODE = false;
+
+const DEV_DATE = "2026-07-21";
+
+const today = () => {
+
+    if(DEV_MODE){
+
+        return DEV_DATE;
+
     }
 
-    state.tasks = data.map(t => ({
-        id: String(t.id),
-        name: t.titre || "",
-        desc: t.description || "",
-        memberId: t.assignee || "",
-        freq: t.frequence || "journalière",
-        due: t.heure_prevue || "",
-        priority: t.priorite || "normale",
-        status: t.completed
-            ? "réalisée"
-            : "a faire",
-        date: t.date || today(),
-        post: "",
-        comment: "",
-        validatedAt: "",
-        validatedBy: "",
-photo: false,
-signature: false,
-attach: false,
-barcode: false,
-taskPhotos: [],
-photo_urls: t.photo_urls || []
-       
-    }));
+    return new Date().toISOString().slice(0,10);
 
-    console.log(
-        "Tâches chargées :",
-        state.tasks
-    );
-} async function loadSchedulesFromSupabase(){
-
-    console.log("Chargement planning Supabase");
-
-    const { data, error } = await window.sb
-        .from("Schedules")
-        .select("*");
-
-    if(error){
-        console.log("Erreur chargement planning :", error);
-        return;
-    }
-
-    data.forEach(s => {
-        state.schedules[s.member_id] = s.planning;
+};
+const nowTime = () =>
+    new Date().toLocaleTimeString("fr-FR", {
+        hour: "2-digit",
+        minute: "2-digit",
     });
 
-    console.log(
-        "Planning chargé depuis Supabase :",
-        state.schedules
-    );
-}
-function save(){localStorage.setItem(storeKey,JSON.stringify(state))} function userName(id){return (state.members.find(m=>m.id===id)||{}).name||'Utilisateur'} function member(id){return state.members.find(m=>m.id===id)} function avatarHtml(m,small=false){return m&&m.profilePhoto?'<img class="avatar '+(small?'small':'')+'" src="'+m.profilePhoto+'" alt="Photo de '+m.name+'">':'<span class="avatar '+(small?'small':'')+'">'+((m?.name||'?').trim()[0]||'?')+'</span>'} function photosHtml(task){
+const currentDayName = () => {
 
-    return (task.photo_urls || []).length
-        ? '<div class="photos">' +
-            task.photo_urls.map((url,i)=>
-                '<a href="'+url+'" target="_blank">' +
-                '<img class="task-photo" src="'+url+'" alt="Photo tâche '+(i+1)+'">' +
-                '</a>'
-            ).join('') +
-          '</div>'
-        : '';
-}function readFiles(input){return Promise.all([...((input&&input.files)||[])].map(file=>new Promise(resolve=>{const r=new FileReader(); r.onload=()=>resolve({name:file.name,type:file.type,data:r.result,addedAt:today()+" "+nowTime(),addedBy:userName(state.currentUser)}); r.readAsDataURL(file)})))} async function log(action, detail){
+    return new Date(today()+"T00:00:00")
+        .toLocaleDateString("fr-FR",{
+            weekday:"long"
+        })
+        .toLowerCase();
 
-    const item = {
-        date: today(),
-        time: nowTime(),
-        user: userName(state.currentUser),
-        action,
-        detail
-    };
+};
+      const uid = () => Math.random().toString(36).slice(2, 9);
+      const addDays = (iso, n) => {
+        const d = new Date(iso + "T00:00:00");
+        d.setDate(d.getDate() + n);
+        return d.toISOString().slice(0, 10);
+      };
+      const mondayOf = (iso) => {
+        const d = new Date(iso + "T00:00:00");
+        const day = (d.getDay() + 6) % 7;
+        d.setDate(d.getDate() - day);
+        return d.toISOString().slice(0, 10);
+      };
+      let state = load();
 
-    state.logs.unshift(item);
+      const savedUser = sessionStorage.getItem("loggedUser");
 
-    const { error } = await window.sb
-        .from("logs")
-        .insert(item);
-
-    console.log("Insertion log :", error);
-
-    save();
-} function isAdminUnlocked(){return sessionStorage.getItem('adminUnlocked')==='true'} function dueLate(task){return task.status!=='réalisée'&&task.date===today()&&task.due&&task.due<nowTime()} function normalizeStatuses(){state.tasks.forEach(x=>{if(dueLate(x))x.status='en retard'}); save()}
-function requestAdmin(){const code=prompt('Code administrateur'); if(code===state.settings.adminCode){sessionStorage.setItem('adminUnlocked','true'); active='dashboard'; log('Connexion administrateur','Accès administrateur ouvert'); render()} else if(code!==null){alert('Code administrateur incorrect. Code de démonstration : 1234')}}
-function render(){normalizeStatuses(); renderUserSelect(); renderRole(); renderTabs(); document.querySelectorAll('.section').forEach(s=>s.classList.toggle('active',s.id===active)); renderDashboard(); renderMyDay(); renderMembers(); renderSchedules(); renderWeekly(); renderTasks(); renderHistory(); renderReports()}
-function renderUserSelect(){
-
-    console.log(
-        "NOUVELLE VERSION renderUserSelect"
-    );
-
-    const savedUser =
-        JSON.parse(
-            sessionStorage.getItem(
-                "loggedUser"
-            ) || "null"
-        );
-
-    if(savedUser){
-
-        state.currentUser =
-            String(savedUser.id);
-    }
-} function renderRole(){
-
-    const savedUser =
-        JSON.parse(
-            sessionStorage.getItem(
-                "loggedUser"
-            ) || "null"
-        );
-
-    if(!savedUser) return;
-
-    roleView.value =
-        savedUser.role_access === "admin"
-            ? "admin"
-            : "employee";
-}async function loginUser(username, password){
-
-    const { data, error } = await window.sb
-        .from("Members")
-        .select("*")
-        .eq("username", username)
-        .eq("password", password)
-        .single();
-
-    if(error || !data){
-        alert("Identifiant ou mot de passe incorrect");
-        return false;
-    }
-
-    state.currentUser = data.id;
-
-    sessionStorage.setItem(
-        "loggedUser",
-        JSON.stringify(data)
-    );
-
-    console.log("Utilisateur connecté :", data);
-
-    return true;
-}
-
-function renderTabs(){const tabs=isAdminUnlocked()?[['dashboard','Tableau de bord'],['myday','Ma journée'],['weekly','Programme semaine'],['members','Membres'],['schedules','Emplois du temps'],['tasks','Tâches'],['history','Historique'],['reports','Rapports']]:[['myday','Ma journée'],['dashboard','Synthèse'],['weekly','Ma semaine']]; if(!isAdminUnlocked()&&['members','schedules','tasks','history','reports'].includes(active))active='myday'; tabsEl=tabs.map(x=>'<button class="tab '+(active===x[0]?'active':'')+'" onclick="active=\''+x[0]+'\';render()">'+x[1]+'</button>').join(''); document.getElementById('tabs').innerHTML=tabsEl}
-function metric(label,value,color){return '<div class="panel metric"><span>'+label+'</span><strong style="color:'+color+'">'+value+'</strong></div>'} function badge(status){return status==='réalisée'?'b-green':status==='en retard'?'b-red':'b-blue'}
-function taskCard(x){const admin=isAdminUnlocked(); const m=member(x.memberId); return '<div class="item priority-'+x.priority+'"><div class="item-head"><div class="member-line">'+avatarHtml(m,true)+'<div><div class="title">'+x.name+'</div><div class="meta">'+x.date+' · '+userName(x.memberId)+' · '+x.post+' · prévue '+x.due+'</div></div></div><span class="badge '+badge(x.status)+'">'+x.status+'</span></div><div class="meta">'+x.desc+'</div>'+photosHtml(x)+'<div class="actions"><button class="good" onclick="validateTask(\''+x.id+'\')" '+(x.status==='réalisée'?'disabled':'')+'>Valider</button><button class="secondary" onclick="addTaskPhotos(\''+x.id+'\')">Ajouter photo</button>'+(admin?'<button class="secondary" onclick="openTaskModal(\''+x.id+'\')">Modifier</button><button class="secondary" onclick="duplicateTask(\''+x.id+'\')">Dupliquer</button>':'')+'</div></div>'}
-function renderDashboard(){adminNotice.innerHTML=isAdminUnlocked()?'<div class="admin-lock" style="margin-bottom:12px">Accès administrateur ouvert. <button class="secondary" onclick="lockAdmin()">Verrouiller</button></div>':'<div class="admin-lock" style="margin-bottom:12px">Vue employé. <button onclick="requestAdmin()">Déverrouiller administrateur</button></div>'; const allToday=state.tasks.filter(x=>x.date===today()); const tasks=isAdminUnlocked()?allToday:allToday.filter(x=>x.memberId===state.currentUser); const done=tasks.filter(x=>x.status==='réalisée').length; const late=tasks.filter(x=>x.status==='en retard').length; document.getElementById('metrics').innerHTML=metric('Tâches du jour',tasks.length,'var(--blue)')+metric('Réalisées',done,'var(--green)')+metric('Restantes',tasks.length-done,'var(--amber)')+metric('Retards',late,'var(--red)'); todayTasks.innerHTML=tasks.length?tasks.map(taskCard).join(''):'<div class="empty">Aucune tâche pour aujourd’hui.</div>'; presenceList.innerHTML=state.members.filter(m=>m.active).map(m=>{const a=(state.attendance[today()]||{})[m.id]||{}; const b=a.arrival&&!a.departure?'b-green':a.departure?'b-gray':'b-red'; const txt=a.arrival?(a.departure?'Parti '+a.departure:'Présent depuis '+a.arrival):'Absent'; return '<div class="item"><div class="item-head"><div class="member-line">'+avatarHtml(m,true)+'<div><div class="title">'+m.name+'</div><div class="meta">'+m.post+'</div></div></div><span class="badge '+b+'">'+txt+'</span></div></div>'}).join(''); const alerts=tasks.filter(x=>x.status==='en retard'||x.priority==='urgente'||x.priority==='importante').slice(0,8); alertsEl=alerts.length?alerts.map(x=>'<div class="item priority-'+x.priority+'"><div class="title">'+x.name+'</div><div class="meta">'+userName(x.memberId)+' · '+x.due+' · '+x.status+'</div></div>').join(''):'<div class="empty">Aucune alerte active.</div>'; document.getElementById('alerts').innerHTML=alertsEl}
-function renderMyDay(){const m=member(state.currentUser); const map=state.attendance[today()]||{}; const a=map[state.currentUser]||{}; myAttendance.innerHTML='<div class="item"><div class="member-line">'+avatarHtml(m)+'<div><div class="title">'+m.name+'</div><div class="meta">'+m.post+'</div></div></div><div class="split"><button class="good" onclick="clockIn()" '+(a.arrival?'disabled':'')+'>Pointer arrivée</button><button class="warn" onclick="clockOut()" '+(!a.arrival||a.departure?'disabled':'')+'>Pointer départ</button></div><p class="meta">Arrivée : '+(a.arrival||'non pointée')+' · Départ : '+(a.departure||'non pointé')+'</p></div>'; const todayIndex=(new Date().getDay()+6)%7; const s=(state.schedules[state.currentUser]||makeSchedule())[todayIndex]; mySchedule.innerHTML=s.work?'<div class="item"><div class="title">'+s.day+' : '+s.start+' - '+s.end+'</div><div class="meta">Pause : '+(s.break||'non renseignée')+'</div><div class="meta">'+(s.note||'')+'</div></div>':'<div class="empty">Repos prévu aujourd’hui.</div>'; const list=state.tasks.filter(x=>x.date===today()&&x.memberId===state.currentUser); myTasks.innerHTML=list.length?list.map(taskCard).join(''):'<div class="empty">Aucune tâche affectée aujourd’hui.</div>'}
-async function clockIn(){
-
-    state.attendance[today()] ||= {};
-
-    state.attendance[today()][state.currentUser] = {
-        ...(state.attendance[today()][state.currentUser] || {}),
-        arrival: nowTime()
-    };
-
-    const { error } = await window.sb
-        .from("attendance")
-        .upsert({
-            member_id: state.currentUser,
-            date: today(),
-            arrival: state.attendance[today()][state.currentUser].arrival
-        });
-
-    console.log("Pointage arrivée :", error);
-
-    log(
-        'Pointage arrivée',
-        userName(state.currentUser)
-    );
-
-    save();
-    render();
-} async function clockOut(){
-
-    state.attendance[today()] ||= {};
-
-    state.attendance[today()][state.currentUser] = {
-        ...(state.attendance[today()][state.currentUser] || {}),
-        departure: nowTime()
-    };
-
-    const { error } = await window.sb
-        .from("attendance")
-        .upsert({
-            member_id: state.currentUser,
-            date: today(),
-            departure:
-                state.attendance[today()]
-                [state.currentUser]
-                .departure
-        });
-
-    console.log("Pointage départ :", error);
-
-    log(
-        'Pointage départ',
-        userName(state.currentUser)
-    );
-
-    save();
-    render();
-} async function loadAttendanceFromSupabase(){
-
-    console.log(
-        "Chargement présences Supabase"
-    );
-
-    const { data, error } =
-        await window.sb
-            .from("attendance")
-            .select("*");
-
-    if(error){
-        console.log(
-            "Erreur présences :",
-            error
-        );
-        return;
-    }
-
-    state.attendance = {};
-
-    data.forEach(a => {
-
-        state.attendance[a.date] ||= {};
-
-        state.attendance[a.date]
-        [a.member_id] = {
-
-            arrival:
-                a.arrival || "",
-
-            departure:
-                a.departure || ""
+      if (savedUser) {
+        state.loggedUser = JSON.parse(savedUser);
+      }
+      let active = "myday";
+      let editingMember = null,
+        editingTask = null;
+      let selectedWeekStart = mondayOf(today());
+      function makeSchedule() {
+        return dayNames.map((d, i) => ({
+          day: d,
+          work: i < 6,
+          start: i < 5 ? "08:00" : "08:00",
+          end: i < 5 ? "17:00" : "13:00",
+          break: "12:00-13:00",
+          note: i === 6 ? "Repos" : "",
+        }));
+      }
+      function t(
+        name,
+        desc,
+        memberId,
+        post,
+        freq,
+        due,
+        priority,
+        photo = false,
+        signature = false,
+        attach = false,
+        barcode = false,
+        date = today(),
+      ) {
+        return {
+          id: uid(),
+          name,
+          desc,
+          memberId,
+          post,
+          freq,
+          due,
+          priority,
+          status: "a faire",
+          date,
+          comment: "",
+          photo,
+          signature,
+          attach,
+          barcode,
+          validatedAt: "",
+          validatedBy: "",
+          taskPhotos: [],
         };
-    });
+      }
+      function seed() {
+        const members = [
+          {
+            id: "m1",
+            name: "Membre 1",
+            post: "Magasinier chef",
+            role: "admin",
+            active: true,
+            phone: "",
+            email: "",
+            profilePhoto: "",
+          },
+          {
+            id: "m2",
+            name: "Membre 2",
+            post: "Magasinier adjoint",
+            role: "employee",
+            active: true,
+            phone: "",
+            email: "",
+            profilePhoto: "",
+          },
+          {
+            id: "m3",
+            name: "Membre 3",
+            post: "Production",
+            role: "employee",
+            active: true,
+            phone: "",
+            email: "",
+            profilePhoto: "",
+          },
+          {
+            id: "m4",
+            name: "Membre 4",
+            post: "Réception",
+            role: "employee",
+            active: true,
+            phone: "",
+            email: "",
+            profilePhoto: "",
+          },
+        ];
+        const tasks = [
+          t(
+            "Contrôle ouverture économat",
+            "Vérifier accès, propreté et sécurité de la zone.",
+            "m1",
+            "Magasinier chef",
+            "journalière",
+            "08:00",
+            "importante",
+          ),
+          t(
+            "Réception marchandises",
+            "Contrôler les produits reçus et joindre le bon de livraison.",
+            "m4",
+            "Réception",
+            "journalière",
+            "09:00",
+            "urgente",
+            true,
+            false,
+            true,
+            true,
+          ),
+          t(
+            "Rangement zone stock",
+            "Ranger les produits selon les emplacements prévus.",
+            "m2",
+            "Magasinier adjoint",
+            "journalière",
+            "10:30",
+            "normale",
+            true,
+          ),
+          t(
+            "Préparation production",
+            "Sortir les produits nécessaires à la production.",
+            "m3",
+            "Production",
+            "journalière",
+            "11:00",
+            "importante",
+          ),
+          t(
+            "Inventaire rapide",
+            "Contrôler les écarts sur les produits sensibles.",
+            "m1",
+            "Inventaire",
+            "hebdomadaire",
+            "15:00",
+            "importante",
+            false,
+            true,
+            false,
+            true,
+          ),
+          t(
+            "Clôture journée",
+            "Vérifier tâches restantes et anomalies.",
+            "m1",
+            "Magasinier chef",
+            "journalière",
+            "17:00",
+            "normale",
+          ),
+        ];
+        const schedules = {};
+        members.forEach((m) => (schedules[m.id] = makeSchedule()));
+        return {
+          version: 2,
+          settings: { adminCode: "1234" },
+          members,
+          tasks,
+          attendance: {},
+          logs: [],
+          schedules,
+          currentUser: "m1",
+        };
+      }
+      function migrate(s) {
+        if (!s) return seed();
+        s.version = 2;
+        s.settings ||= { adminCode: "1234" };
+        s.settings.adminCode ||= "1234";
+        s.attendance ||= {};
+        s.logs ||= [];
+        s.schedules ||= {};
+        s.members ||= [];
+        s.tasks ||= [];
+        s.members.forEach((m) => {
+          m.active = m.active !== false;
+          m.role ||= m.id === "m1" ? "admin" : "employee";
+          m.post ||= "Employé polyvalent";
+          m.profilePhoto ||= "";
+          if (!s.schedules[m.id]) s.schedules[m.id] = makeSchedule();
+        });
+        s.tasks.forEach((x) => {
+          x.date ||= today();
+          x.freq =
+            x.freq === "quotidienne" ? "journalière" : x.freq || "journalière";
+          x.status ||= "a faire";
+          x.priority ||= "normale";
+          x.taskPhotos ||= [];
+        });
+        return s;
+      }
+      function load() {
+        try {
+          return migrate(
+            JSON.parse(localStorage.getItem(storeKey)) ||
+              JSON.parse(localStorage.getItem(oldKey)) ||
+              seed(),
+          );
+        } catch (e) {
+          return seed();
+        }
+      }
+      async function loadMembersFromSupabase() {
+        console.log("Fonction loadMembersFromSupabase lancée");
 
-    console.log(
-        "Présences chargées :",
-        state.attendance
-    );
-}
+        const { data, error } = await window.sb.from("Members").select("*");
 
- function validateTask(id){const x=state.tasks.find(t=>t.id===id); const comment=prompt('Commentaire éventuel','')||''; x.status='réalisée'; x.validatedAt=today()+' '+nowTime(); x.validatedBy=userName(state.currentUser); x.comment=comment; log('Validation tâche',x.name+' par '+x.validatedBy); render()} function duplicateTask(id){const x=state.tasks.find(t=>t.id===id); const copy={...x,id:uid(),name:x.name+' (copie)',status:'a faire',validatedAt:'',validatedBy:''}; state.tasks.push(copy); log('Duplication tâche',copy.name); render()} async function deleteTask(id){
-
-    if(confirm('Supprimer cette tâche ?')){
-
-        const x = state.tasks.find(t => t.id === id);
-
-        const { error } = await window.sb
-            .from("Tasks")
-            .delete()
-            .eq("id", id);
-
-        console.log("Suppression :", error);
-
-        if(error){
-            alert("Erreur suppression : " + error.message);
-            return;
+        if (error) {
+          console.log("Erreur chargement membres :", error);
+          return;
         }
 
-        state.tasks = state.tasks.filter(t => t.id !== id);
+        state.members = data.map((m) => ({
+          id: String(m.id),
+          name: m.Nom,
+          post: m.Poste,
+          role: m.Role === "Administrateur" ? "admin" : "employee",
+          phone: m.Telephone || "",
+          active: m.Actif,
+        }));
 
-        log('Suppression tâche', x.name);
+        console.log("Membres chargés depuis Supabase :", state.members);
+      }
+
+      async function loadTasksFromSupabase() {
+        console.log("Chargement tâches Supabase");
+
+        const { data, error } = await window.sb.from("Tasks").select("*");
+
+        if (error) {
+          console.log("Erreur chargement tâches :", error);
+          return;
+        }
+
+        state.tasks = data.map((t) => ({
+          id: String(t.id),
+          name: t.titre || "",
+          desc: t.description || "",
+          memberId: t.assignee || "",
+          freq: t.frequence || "journalière",
+          due: t.heure_prevue || "",
+          priority: t.priorite || "normale",
+          status: t.completed ? "réalisée" : "a faire",
+          date: t.date || today(),
+          post: "",
+          comment: "",
+          validatedAt: "",
+          validatedBy: "",
+          photo: false,
+          signature: false,
+          attach: false,
+          barcode: false,
+          taskPhotos: [],
+          photo_urls: t.photo_urls || [],
+        }));
+
+        console.log("Tâches chargées :", state.tasks);
+      }
+      async function loadSchedulesFromSupabase() {
+        console.log("Chargement planning Supabase");
+
+        const { data, error } = await window.sb.from("Schedules").select("*");
+
+        if (error) {
+          console.log("Erreur chargement planning :", error);
+          return;
+        }
+
+        data.forEach((s) => {
+          state.schedules[s.member_id] = s.planning;
+        });
+
+        console.log("Planning chargé depuis Supabase :", state.schedules);
+      }
+      function save() {
+        localStorage.setItem(storeKey, JSON.stringify(state));
+      }
+      function userName(id) {
+        return (
+          (state.members.find((m) => m.id === id) || {}).name || "Utilisateur"
+        );
+      }
+      function member(id) {
+        return state.members.find((m) => m.id === id);
+      }
+      function avatarHtml(m, small = false) {
+        return m && m.profilePhoto
+          ? '<img class="avatar ' +
+              (small ? "small" : "") +
+              '" src="' +
+              m.profilePhoto +
+              '" alt="Photo de ' +
+              m.name +
+              '">'
+          : '<span class="avatar ' +
+              (small ? "small" : "") +
+              '">' +
+              ((m?.name || "?").trim()[0] || "?") +
+              "</span>";
+      }
+      function photosHtml(task) {
+        return (task.photo_urls || []).length
+          ? '<div class="photos">' +
+              task.photo_urls
+                .map(
+                  (url, i) =>
+                    '<a href="' +
+                    url +
+                    '" target="_blank">' +
+                    '<img class="task-photo" src="' +
+                    url +
+                    '" alt="Photo tâche ' +
+                    (i + 1) +
+                    '">' +
+                    "</a>",
+                )
+                .join("") +
+              "</div>"
+          : "";
+      }
+      function readFiles(input) {
+        return Promise.all(
+          [...((input && input.files) || [])].map(
+            (file) =>
+              new Promise((resolve) => {
+                const r = new FileReader();
+                r.onload = () =>
+                  resolve({
+                    name: file.name,
+                    type: file.type,
+                    data: r.result,
+                    addedAt: today() + " " + nowTime(),
+                    addedBy: userName(state.currentUser),
+                  });
+                r.readAsDataURL(file);
+              }),
+          ),
+        );
+      }
+      async function log(action, detail) {
+        const item = {
+          date: today(),
+          time: nowTime(),
+          user: userName(state.currentUser),
+          action,
+          detail,
+        };
+
+        state.logs.unshift(item);
+
+        const { error } = await window.sb.from("logs").insert(item);
+
+        console.log("Insertion log :", error);
+
+        save();
+      }
+      function currentUserIsAdmin() {
+
+    const user = JSON.parse(
+        sessionStorage.getItem("loggedUser") || "null"
+    );
+
+    return user && user.role_access === "admin";
+}
+      function dueLate(task) {
+        return (
+          task.status !== "réalisée" &&
+          task.date === today() &&
+          task.due &&
+          task.due < nowTime()
+        );
+      }
+      function normalizeStatuses() {
+        state.tasks.forEach((x) => {
+          if (dueLate(x)) x.status = "en retard";
+        });
+        save();
+      }
+      function render() {
+
+  const loggedUser = sessionStorage.getItem("loggedUser");
+
+  const loginHeader = document.getElementById("loginHeader");
+  const appMain = document.getElementById("appMain");
+
+  if (!loggedUser) {
+
+    if (loginHeader) loginHeader.style.display = "block";
+    if (appMain) appMain.style.display = "none";
+
+    return;
+}
+
+if (loginHeader) loginHeader.style.display = "none";
+if (appMain) appMain.style.display = "block";
+  normalizeStatuses();
+  renderUserSelect();
+  renderRole();
+  renderTabs();
+        document
+          .querySelectorAll(".section")
+          .forEach((s) => s.classList.toggle("active", s.id === active));
+        if (currentUserIsAdmin()) {
+
+    renderAdminHome();
+
+} else {
+
+    renderEmployeeHome();
+
+}
+        renderDashboard();
+        renderMyDay();
+        renderMembers();
+        renderSchedules();
+        renderWeekly();
+        renderTasks();
+        renderHistory();
+        renderReports();
+      }
+      function renderAdminHome() {
+
+    const user = member(state.currentUser);
+
+    if (!user) return;
+
+    document.getElementById("homeContent").innerHTML = `
+
+        <div class="welcome-card">
+
+            <h2>Bonjour ${user.name} 👋</h2>
+
+            <p>Bienvenue dans votre espace administrateur.</p>
+
+        </div>
+
+        <div class="profile-card">
+
+            <div class="profile-photo">
+
+                ${user.name.charAt(0)}
+
+            </div>
+
+            <div class="profile-info">
+
+                <h2>${user.name}</h2>
+
+                <p>${user.post}</p>
+
+                <span>Administration - Cercle de l'Union</span>
+
+            </div>
+
+        </div>
+<div class="admin-cards">
+
+    <div class="admin-card">
+
+        <div class="admin-icon">👥</div>
+
+        <h3>Présents</h3>
+
+        <strong id="presentCount">0</strong>
+
+    </div>
+
+
+    <div class="admin-card">
+
+        <div class="admin-icon">⏰</div>
+
+        <h3>Retards</h3>
+
+        <strong id="lateCount">0</strong>
+
+    </div>
+
+
+    <div class="admin-card">
+
+        <div class="admin-icon">📋</div>
+
+        <h3>Tâches en retard</h3>
+
+        <strong id="lateTaskCount">0</strong>
+
+    </div>
+
+
+    <div class="admin-card">
+
+        <div class="admin-icon">🚨</div>
+
+        <h3>Alertes</h3>
+
+        <strong id="alertCount">0</strong>
+
+    </div>
+
+`;
+
+}
+      function renderUserSelect() {
+        console.log("NOUVELLE VERSION renderUserSelect");
+
+        const savedUser = JSON.parse(
+          sessionStorage.getItem("loggedUser") || "null",
+        );
+
+        if (savedUser) {
+          state.currentUser = String(savedUser.id);
+        }
+      }
+      function renderRole(){
+
+    const savedUser = JSON.parse(
+        sessionStorage.getItem("loggedUser") || "null"
+    );
+
+    if (!savedUser) return;
+
+}
+      async function loginUser(username, password) {
+        const { data, error } = await window.sb
+          .from("Members")
+          .select("*")
+          .eq("username", username)
+          .eq("password", password)
+          .single();
+
+        if (error || !data) {
+          alert("Identifiant ou mot de passe incorrect");
+          return false;
+        }
+
+        state.currentUser = data.id;
+
+        sessionStorage.setItem("loggedUser", JSON.stringify(data));
+
+        console.log("Utilisateur connecté :", data);
+
+        return true;
+      }
+
+      function renderTabs() {
+        const tabs = currentUserIsAdmin()
+          ? [
+  ["home", "⌂ Accueil"],
+  ["dashboard", "Tableau de bord"],
+  ["myday", "Ma journée"],
+  ["weekly", "Programme semaine"],
+  ["members", "Membres"],
+  ["schedules", "Emplois du temps"],
+  ["tasks", "Tâches"],
+  ["history", "Historique"],
+  ["reports", "Rapports"],
+]
+          : [
+  ["home", "⌂ Accueil"],
+  ["myday", "Ma journée"],
+  ["weekly", "Ma semaine"],
+];
+        if (
+ !currentUserIsAdmin() &&
+ ["members", "schedules", "tasks", "history", "reports"].includes(active)
+)
+          active = "myday";
+        tabsEl = tabs
+.map(
+  (x) =>
+    '<button class="tab ' +
+    (active === x[0] ? "active" : "") +
+    '" onclick="active=\'' +
+    x[0] +
+    "';closeMenu();render()\">" +
+    x[1] +
+    "</button>",
+)
+.join("");
+        document.getElementById("tabs").innerHTML = tabsEl;
+      }
+      function metric(label, value, color) {
+        return (
+          '<div class="panel metric"><span>' +
+          label +
+          '</span><strong style="color:' +
+          color +
+          '">' +
+          value +
+          "</strong></div>"
+        );
+      }
+      function badge(status) {
+        return status === "réalisée"
+          ? "b-green"
+          : status === "en retard"
+            ? "b-red"
+            : "b-blue";
+      }
+      function taskCard(x) {
+        const admin = currentUserIsAdmin();
+        const m = member(x.memberId);
+        return (
+          '<div class="item priority-' +
+          x.priority +
+          '"><div class="item-head"><div class="member-line">' +
+          avatarHtml(m, true) +
+          '<div><div class="title">' +
+          x.name +
+          '</div><div class="meta">' +
+          x.date +
+          " · " +
+          userName(x.memberId) +
+          " · " +
+          x.post +
+          " · prévue " +
+          x.due +
+          '</div></div></div><span class="badge ' +
+          badge(x.status) +
+          '">' +
+          x.status +
+          '</span></div><div class="meta">' +
+          x.desc +
+          "</div>" +
+          photosHtml(x) +
+          (admin
+  ? '<div class="actions"><button class="good" onclick="validateTask(\'' +
+    x.id +
+    "')\" " +
+    (x.status === "réalisée" ? "disabled" : "") +
+    '>Valider</button><button class="secondary" onclick="addTaskPhotos(\'' +
+    x.id +
+    "')\">Ajouter photo</button>"
+  : '<div class="actions">') +
+          (admin
+            ? '<button class="secondary" onclick="openTaskModal(\'' +
+              x.id +
+              '\')">Modifier</button><button class="secondary" onclick="duplicateTask(\'' +
+              x.id +
+              "')\">Dupliquer</button>"
+            : "") +
+          "</div></div>"
+        );
+      }
+      function renderDashboard() {
+        adminNotice.innerHTML = currentUserIsAdmin()
+  ? '<div class="admin-lock" style="margin-bottom:12px">Accès administrateur.</div>'
+  : '';
+        const allToday = state.tasks.filter((x) => x.date === today());
+        const tasks = currentUserIsAdmin()
+          ? allToday
+          : allToday.filter((x) => x.memberId === state.currentUser);
+        const done = tasks.filter((x) => x.status === "réalisée").length;
+        const late = tasks.filter((x) => x.status === "en retard").length;
+        document.getElementById("metrics").innerHTML =
+          metric("Tâches du jour", tasks.length, "var(--blue)") +
+          metric("Réalisées", done, "var(--green)") +
+          metric("Restantes", tasks.length - done, "var(--amber)") +
+          metric("Retards", late, "var(--red)");
+        todayTasks.innerHTML = tasks.length
+          ? tasks.map(taskCard).join("")
+          : '<div class="empty">Aucune tâche pour aujourd’hui.</div>';
+        presenceList.innerHTML = state.members
+          .filter((m) => m.active)
+          .map((m) => {
+            const a = (state.attendance[today()] || {})[m.id] || {};
+            const b =
+              a.arrival && !a.departure
+                ? "b-green"
+                : a.departure
+                  ? "b-gray"
+                  : "b-red";
+            const txt = a.arrival
+              ? a.departure
+                ? "Parti " + a.departure
+                : "Présent depuis " + a.arrival
+              : "Absent";
+            return (
+              '<div class="item"><div class="item-head"><div class="member-line">' +
+              avatarHtml(m, true) +
+              '<div><div class="title">' +
+              m.name +
+              '</div><div class="meta">' +
+              m.post +
+              '</div></div></div><span class="badge ' +
+              b +
+              '">' +
+              txt +
+              "</span></div></div>"
+            );
+          })
+          .join("");
+        const alerts = tasks
+          .filter(
+            (x) =>
+              x.status === "en retard" ||
+              x.priority === "urgente" ||
+              x.priority === "importante",
+          )
+          .slice(0, 8);
+        alertsEl = alerts.length
+          ? alerts
+              .map(
+                (x) =>
+                  '<div class="item priority-' +
+                  x.priority +
+                  '"><div class="title">' +
+                  x.name +
+                  '</div><div class="meta">' +
+                  userName(x.memberId) +
+                  " · " +
+                  x.due +
+                  " · " +
+                  x.status +
+                  "</div></div>",
+              )
+              .join("")
+          : '<div class="empty">Aucune alerte active.</div>';
+        document.getElementById("alerts").innerHTML = alertsEl;
+      }
+   function renderMyDay() {
+
+    console.log("renderMyDay STABLE");
+
+    console.log(
+        "currentUser =",
+        state.currentUser
+    );
+
+    const m = member(state.currentUser);
+
+    console.log(
+        "member trouvé =",
+        m
+    );
+
+    if (!m) {
+
+    myAttendance.innerHTML =
+        '<div class="empty">Veuillez vous connecter.</div>';
+
+    mySchedule.innerHTML =
+        '<div class="empty">Aucun planning disponible.</div>';
+
+    myTasks.innerHTML =
+        '<div class="empty">Aucune tâche disponible.</div>';
+
+    return;
+}
+
+    const map = state.attendance[today()] || {};
+        const a = map[state.currentUser] || {};
+        myAttendance.innerHTML =
+          '<div class="item"><div class="member-line">' +
+          avatarHtml(m) +
+          '<div><div class="title">' +
+          m.name +
+          '</div><div class="meta">' +
+          m.post +
+          '</div></div></div><div class="split"><button class="good" onclick="clockIn()" ' +
+          (a.arrival ? "disabled" : "") +
+          '>Pointer arrivée</button><button class="warn" onclick="clockOut()" ' +
+          (!a.arrival || a.departure ? "disabled" : "") +
+          '>Pointer départ</button></div><p class="meta">Arrivée : ' +
+          (a.arrival || "non pointée") +
+          " · Départ : " +
+          (a.departure || "non pointé") +
+          "</p></div>";
+        const todayIndex = (new Date().getDay() + 6) % 7;
+        const s = (state.schedules[state.currentUser] || makeSchedule())[
+          todayIndex
+        ];
+        mySchedule.innerHTML = s.work
+          ? '<div class="item"><div class="title">' +
+            s.day +
+            " : " +
+            s.start +
+            " - " +
+            s.end +
+            '</div><div class="meta">Pause : ' +
+            (s.break || "non renseignée") +
+            '</div><div class="meta">' +
+            (s.note || "") +
+            "</div></div>"
+          : '<div class="empty">Repos prévu aujourd’hui.</div>';
+        const list = state.tasks.filter(
+          (x) => x.date === today() && x.memberId === state.currentUser,
+        );
+        myTasks.innerHTML = list.length
+          ? list.map(taskCard).join("")
+          : '<div class="empty">Aucune tâche affectée aujourd’hui.</div>';
+      }
+ function generatePresenceSummary() {
+
+    const today = new Date().toISOString().slice(0,10);
+
+    const todayName = new Date().toLocaleDateString("fr-FR", {
+        weekday: "long"
+    });
+
+    const result = {
+
+        total:0,
+
+        present:0,
+
+        absent:0,
+
+        late:0,
+
+        alerts:[]
+
+    };
+
+
+    state.members.forEach(member=>{
+
+        if(!member.active) return;
+
+        const planning = state.schedules[member.id];
+
+        if(!planning) return;
+
+        const todaySchedule = planning.find(p=>p.day.toLowerCase()===todayName);
+
+        if(!todaySchedule) return;
+
+        if(!todaySchedule.work) return;
+
+        result.total++;
+
+        const attendanceToday =
+            state.attendance[today]?.[member.id];
+
+        if(attendanceToday){
+
+            result.present++;
+
+        }else{
+
+            result.absent++;
+
+            result.alerts.push({
+
+                type:"absence",
+
+                member:member.name
+
+            });
+
+        }
+
+    });
+
+    return result;
+
+}     
+      function renderHome() {
+
+  const user = member(state.currentUser);
+
+  if (!user) return;
+
+  document.getElementById("homeName").textContent = user.name;
+  document.getElementById("homePost").textContent = user.post;
+
+}
+      async function clockIn() {
+        state.attendance[today()] ||= {};
+
+        state.attendance[today()][state.currentUser] = {
+          ...(state.attendance[today()][state.currentUser] || {}),
+          arrival: nowTime(),
+        };
+
+        const { error } = await window.sb.from("attendance").upsert({
+          member_id: state.currentUser,
+          date: today(),
+          arrival: state.attendance[today()][state.currentUser].arrival,
+        });
+
+        console.log("Pointage arrivée :", error);
+
+        log("Pointage arrivée", userName(state.currentUser));
 
         save();
         render();
-    }
-} function renderMembers(){memberTable.innerHTML='<table><thead><tr><th>Nom</th><th>Poste</th><th>Rôle</th><th>Statut</th><th>Actions</th></tr></thead><tbody>'+state.members.map(m=>'<tr><td><div class="member-line">'+avatarHtml(m,true)+'<span>'+m.name+'</span></div></td><td>'+m.post+'</td><td>'+m.role+'</td><td>'+(m.active?'Actif':'Inactif')+'</td><td><div class="actions"><button class="secondary" onclick="openMemberModal(\''+m.id+'\')">Modifier</button><button class="secondary" onclick="toggleMember(\''+m.id+'\')">'+(m.active?'Désactiver':'Activer')+'</button></div></td></tr>').join('')+'</tbody></table>'}
-function renderSchedules(){scheduleTable.innerHTML='<table><thead><tr><th>Membre</th>'+dayNames.map(d=>'<th>'+d+'</th>').join('')+'<th>Actions</th></tr></thead><tbody>'+state.members.map(m=>'<tr><td><div class="member-line">'+avatarHtml(m,true)+'<div><b>'+m.name+'</b><div class="meta">'+m.post+'</div></div></div></td>'+((state.schedules[m.id]||makeSchedule()).map(s=>'<td>'+(s.work?'<b>'+s.start+'-'+s.end+'</b><div class="meta">'+(s.note||'')+'</div>':'Repos')+'</td>').join(''))+'<td><button class="secondary" onclick="openScheduleModal(\''+m.id+'\')">Modifier</button></td></tr>').join('')+'</tbody></table>'}
-function renderWeekly(){weekPicker.value=selectedWeekStart; const days=dayNames.map((d,i)=>({name:d,date:addDays(selectedWeekStart,i)})); weekBoard.innerHTML=days.map(day=>{const tasks=state.tasks.filter(t=>t.date===day.date&&(isAdminUnlocked()||t.memberId===state.currentUser)); return '<div class="day-col"><h3>'+day.name+'<br><span class="meta">'+day.date+'</span></h3>'+tasks.map(x=>'<div class="mini-task priority-'+x.priority+'"><b>'+x.due+' · '+x.name+'</b><span>'+userName(x.memberId)+' · '+x.status+'</span></div>').join('')+'<button class="secondary" onclick="openTaskModal(null,\''+day.date+'\')">+ Ajouter</button></div>'}).join('')}
-function shiftWeek(n){selectedWeekStart=addDays(selectedWeekStart,n); renderWeekly()} function setWeekFromInput(v){selectedWeekStart=mondayOf(v||today()); renderWeekly()} function duplicateWeek(){if(!isAdminUnlocked()){requestAdmin(); return} const next=addDays(selectedWeekStart,7); if(!confirm('Dupliquer toutes les tâches de cette semaine vers la semaine suivante ?'))return; const copies=state.tasks.filter(t=>t.date>=selectedWeekStart&&t.date<=addDays(selectedWeekStart,6)).map(t=>({...t,id:uid(),date:addDays(t.date,7),status:'a faire',validatedAt:'',validatedBy:'',comment:''})); state.tasks.push(...copies); log('Duplication semaine',copies.length+' tâches vers semaine du '+next); selectedWeekStart=next; render()}
-function renderTasks(){const q=(taskSearch?.value||'').toLowerCase(); const f=taskFilter?.value||'all'; let list=state.tasks.filter(x=>(f==='all'||x.status===f)&&(x.name.toLowerCase().includes(q)||userName(x.memberId).toLowerCase().includes(q)||x.date.includes(q))); taskTable.innerHTML='<table><thead><tr><th>Tâche</th><th>Affectée à</th><th>Date prévue</th><th>Priorité</th><th>Statut</th><th>Actions</th></tr></thead><tbody>'+list.map(x=>'<tr><td><b>'+x.name+'</b><div class="meta">'+x.desc+'</div></td><td>'+userName(x.memberId)+'</td><td>'+x.date+' '+x.due+'</td><td>'+x.priority+'</td><td>'+x.status+'</td><td><div class="actions"><button class="secondary" onclick="openTaskModal(\''+x.id+'\')">Modifier</button><button class="secondary" onclick="duplicateTask(\''+x.id+'\')">Dupliquer</button><button class="danger" onclick="deleteTask(\''+x.id+'\')">Supprimer</button></div></td></tr>').join('')+'</tbody></table>'}
-function renderHistory(){const q=(historySearch?.value||'').toLowerCase(); const rows=state.logs.filter(l=>(l.date+l.user+l.action+l.detail).toLowerCase().includes(q)); historyTable.innerHTML=rows.length?'<table><thead><tr><th>Date</th><th>Heure</th><th>Utilisateur</th><th>Action</th><th>Détail</th></tr></thead><tbody>'+rows.map(l=>'<tr><td>'+l.date+'</td><td>'+l.time+'</td><td>'+l.user+'</td><td>'+l.action+'</td><td>'+l.detail+'</td></tr>').join('')+'</tbody></table>':'<div class="empty">Aucun historique.</div>'}
-function renderReports(){const byMember={}; state.members.forEach(m=>byMember[m.name]=state.tasks.filter(t=>t.memberId===m.id&&t.status==='réalisée').length); stats.innerHTML=Object.entries(byMember).map(([k,v])=>'<div class="item"><div class="item-head"><span>'+k+'</span><b>'+v+' tâche(s) réalisée(s)</b></div></div>').join('')}
-function openMemberModal(id){if(!isAdminUnlocked()){requestAdmin(); return} editingMember=id; const m=id?member(id):{name:'',post:posts[0],role:'employee',active:true,phone:'',email:'',profilePhoto:''}; memberForm.innerHTML='<div class="field full"><label class="label">Photo de profil</label><div class="profile-preview"><span id="profilePreview">'+avatarHtml(m)+'</span><div style="flex:1"><input name="profilePhotoFile" type="file" accept="image/*" onchange="previewProfilePhoto(this)"><input name="profilePhoto" type="hidden" value="'+(m.profilePhoto||'')+'"><button class="secondary" type="button" onclick="removeProfilePhoto()" style="margin-top:8px">Retirer la photo</button></div></div></div><div class="field"><label class="label">Nom</label><input name="name" value="'+m.name+'" required></div><div class="field"><label class="label">Poste</label><select name="post">'+posts.map(p=>'<option '+(p===m.post?'selected':'')+'>'+p+'</option>').join('')+'</select></div><div class="field"><label class="label">Rôle</label><select name="role"><option value="employee">Employé</option><option value="admin" '+(m.role==='admin'?'selected':'')+'>Administrateur</option></select></div><div class="field"><label class="label">Statut</label><select name="active"><option value="true">Actif</option><option value="false" '+(!m.active?'selected':'')+'>Inactif</option></select></div><div class="field"><label class="label">Téléphone</label><input name="phone" value="'+(m.phone||'')+'"></div><div class="field"><label class="label">E-mail</label><input name="email" value="'+(m.email||'')+'"></div><div class="full row right"><button class="secondary" type="button" onclick="memberDialog.close()">Annuler</button><button>Enregistrer</button></div>'; memberDialog.showModal()}
-memberForm.onsubmit=async e=>{e.preventDefault(); const d=Object.fromEntries(new FormData(memberForm)); let profilePhoto=d.profilePhoto||''; const fileInput=memberForm.querySelector('[name="profilePhotoFile"]'); const files=await readFiles(fileInput); if(files[0]) profilePhoto=files[0].data; const item={id:editingMember||uid(),name:d.name,post:d.post,role:d.role,active:d.active==='true',phone:d.phone,email:d.email,profilePhoto}; if(editingMember){
+      }
+      async function clockOut() {
+        state.attendance[today()] ||= {};
 
-    Object.assign(member(editingMember),item);
+        state.attendance[today()][state.currentUser] = {
+          ...(state.attendance[today()][state.currentUser] || {}),
+          departure: nowTime(),
+        };
 
-    const { error } = await window.sb
-        .from("Members")
-        .update({
-            Nom: item.name,
-            Poste: item.post,
-            Role: item.role === "admin" ? "Administrateur" : "Employé",
-            Telephone: item.phone,
-            Actif: item.active
-        })
-        .eq("id", editingMember);
-
-    console.log("Modification membre :", error);
-
-    log('Modification membre',item.name);
-}
-else{
-
-    state.members.push(item);
-
-    const { error } = await window.sb
-        .from("Members")
-        .insert({
-            Nom: item.name,
-            Poste: item.post,
-            Role: item.role === "admin" ? "Administrateur" : "Employé",
-            Telephone: item.phone,
-            Actif: item.active
+        const { error } = await window.sb.from("attendance").upsert({
+          member_id: state.currentUser,
+          date: today(),
+          departure: state.attendance[today()][state.currentUser].departure,
         });
 
-    console.log("Création membre :", error);
+        console.log("Pointage départ :", error);
 
-    state.schedules[item.id]=makeSchedule();
+        log("Pointage départ", userName(state.currentUser));
 
-    log('Création membre',item.name)
-} save(); memberDialog.close(); render()}; async function toggleMember(id){
-    if(!isAdminUnlocked()){requestAdmin(); return}
+        save();
+        render();
+      }
+      async function loadAttendanceFromSupabase() {
+        console.log("Chargement présences Supabase");
 
-    const m = member(id);
+        const { data, error } = await window.sb.from("attendance").select("*");
 
-    m.active = !m.active;
-
-    const { error } = await window.sb
-        .from("Members")
-        .update({
-            Actif: m.active
-        })
-        .eq("id", id);
-
-    console.log("Modification statut membre :", error);
-
-    log(
-        m.active ? 'Activation membre' : 'Désactivation membre',
-        m.name
-    );
-
-    save();
-    render();
-} async function uploadTaskPhotos(files){
-
-    console.log("Upload lancé :", files);
-    const urls = [];
-
-    for(const file of files){
-
-        const fileName =
-            Date.now()
-            + "_"
-            + Math.random()
-                .toString(36)
-                .substring(2)
-            + "_"
-            + file.name;
-
-        const { error } =
-            await window.sb.storage
-                .from("task-photos")
-                .upload(
-                    fileName,
-                    file
-                );
-
-        console.log(
-            "Upload photo :",
-            error
-        );
-
-        if(!error){
-
-            const { data } =
-                window.sb.storage
-                    .from("task-photos")
-                    .getPublicUrl(
-                        fileName
-                    );
-
-            urls.push(
-                data.publicUrl
-            );
+        if (error) {
+          console.log("Erreur présences :", error);
+          return;
         }
-    }
 
-    return urls;
-} async function previewProfilePhoto(input){const files=await readFiles(input); if(files[0]){memberForm.querySelector('[name="profilePhoto"]').value=files[0].data; profilePreview.innerHTML='<img class="avatar" src="'+files[0].data+'" alt="Photo de profil">'}} function removeProfilePhoto(){memberForm.querySelector('[name="profilePhoto"]').value=''; profilePreview.innerHTML='<span class="avatar">?</span>'; const file=memberForm.querySelector('[name="profilePhotoFile"]'); if(file) file.value=''}
-function openTaskModal(id,date){if(!isAdminUnlocked()){requestAdmin(); return} editingTask=id; const defaultMember =
-    state.members.length ? state.members[0].id : '';
+        state.attendance = {};
 
-const x = id
-    ? state.tasks.find(t=>t.id===id)
-    : t(
-        '',
-        '',
-        defaultMember,
-        posts[0],
-        'journalière',
-        '08:00',
-        'normale',
-        false,false,false,false,
-        date || today()
-      ); taskForm.innerHTML='<div class="field full"><label class="label">Nom de la tâche</label><input name="name" value="'+x.name+'" required></div><div class="field full"><label class="label">Description</label><textarea name="desc">'+x.desc+'</textarea></div><div class="field"><label class="label">Collaborateur</label><select name="memberId">'+state.members.filter(m=>m.active).map(m=>'<option value="'+m.id+'" '+(m.id===x.memberId?'selected':'')+'>'+m.name+'</option>').join('')+'</select></div><div class="field"><label class="label">Poste</label><select name="post">'+posts.map(p=>'<option '+(p===x.post?'selected':'')+'>'+p+'</option>').join('')+'</select></div><div class="field"><label class="label">Fréquence</label><select name="freq">'+['journalière','hebdomadaire','mensuelle','ponctuelle'].map(p=>'<option '+(p===x.freq?'selected':'')+'>'+p+'</option>').join('')+'</select></div><div class="field"><label class="label">Date précise</label><input name="date" type="date" value="'+(x.date||today())+'"></div><div class="field"><label class="label">Heure prévue</label><input name="due" type="time" value="'+x.due+'"></div><div class="field"><label class="label">Priorité</label><select name="priority">'+['faible','normale','importante','urgente'].map(p=>'<option '+(p===x.priority?'selected':'')+'>'+p+'</option>').join('')+'</select></div><div class="field"><label class="label">Statut</label><select name="status">'+['a faire','en cours','réalisée','en retard','annulée','reportée'].map(p=>'<option '+(p===x.status?'selected':'')+'>'+p+'</option>').join('')+'</select></div><div class="field"><label class="label">Options</label><select name="options" multiple><option value="photo" '+(x.photo?'selected':'')+'>Photo</option><option value="signature" '+(x.signature?'selected':'')+'>Signature</option><option value="attach" '+(x.attach?'selected':'')+'>Pièce jointe</option><option value="barcode" '+(x.barcode?'selected':'')+'>Code-barres</option></select></div><div class="field full"><label class="label">Photos de la tâche</label><input name="taskPhotoFiles" type="file" accept="image/*" multiple><div class="meta">Les photos existantes sont conservées. Ajoute ici les nouvelles photos à joindre.</div>'+photosHtml(x)+'</div><div class="full row right"><button class="secondary" type="button" onclick="taskDialog.close()">Annuler</button><button>Enregistrer</button></div>'; taskDialog.showModal()}
-taskForm.onsubmit=async e=>{e.preventDefault(); const fd=new FormData(taskForm); const opts=fd.getAll('options'); const existing=editingTask?(state.tasks.find(t=>t.id===editingTask).taskPhotos||[]):[]; const added=await readFiles(taskForm.querySelector('[name="taskPhotoFiles"]')); console.log("Fichiers sélectionnés :", taskForm.querySelector('[name="taskPhotoFiles"]').files); const uploadedUrls =
-    await uploadTaskPhotos(
-        taskForm.querySelector(
-            '[name="taskPhotoFiles"]'
-        ).files
-    ); const item={id:editingTask||uid(),name:fd.get('name'),desc:fd.get('desc'),memberId:fd.get('memberId'),post:fd.get('post'),freq:fd.get('freq'),date:fd.get('date'),due:fd.get('due'),priority:fd.get('priority'),status:fd.get('status'),comment:'',validatedAt:'',validatedBy:'',photo:opts.includes('photo'),signature:opts.includes('signature'),attach:opts.includes('attach'),barcode:opts.includes('barcode'),taskPhotos:[...existing,...added], photo_urls: uploadedUrls}; 
-if(editingTask){
+        data.forEach((a) => {
+          state.attendance[a.date] ||= {};
 
-    Object.assign(
-        state.tasks.find(t => t.id === editingTask),
-        item
-    );
+          state.attendance[a.date][a.member_id] = {
+            arrival: a.arrival || "",
 
-    const { error } = await window.sb
-        .from("Tasks")
-        .update({
+            departure: a.departure || "",
+          };
+        });
+
+        console.log("Présences chargées :", state.attendance);
+      }
+
+      function validateTask(id) {
+        const x = state.tasks.find((t) => t.id === id);
+        const comment = prompt("Commentaire éventuel", "") || "";
+        x.status = "réalisée";
+        x.validatedAt = today() + " " + nowTime();
+        x.validatedBy = userName(state.currentUser);
+        x.comment = comment;
+        log("Validation tâche", x.name + " par " + x.validatedBy);
+        render();
+      }
+      function duplicateTask(id) {
+        const x = state.tasks.find((t) => t.id === id);
+        const copy = {
+          ...x,
+          id: uid(),
+          name: x.name + " (copie)",
+          status: "a faire",
+          validatedAt: "",
+          validatedBy: "",
+        };
+        state.tasks.push(copy);
+        log("Duplication tâche", copy.name);
+        render();
+      }
+      async function deleteTask(id) {
+        if (confirm("Supprimer cette tâche ?")) {
+          const x = state.tasks.find((t) => t.id === id);
+
+          const { error } = await window.sb.from("Tasks").delete().eq("id", id);
+
+          console.log("Suppression :", error);
+
+          if (error) {
+            alert("Erreur suppression : " + error.message);
+            return;
+          }
+
+          state.tasks = state.tasks.filter((t) => t.id !== id);
+
+          log("Suppression tâche", x.name);
+
+          save();
+          render();
+        }
+      }
+      function renderMembers() {
+        memberTable.innerHTML =
+          "<table><thead><tr><th>Nom</th><th>Poste</th><th>Rôle</th><th>Statut</th><th>Actions</th></tr></thead><tbody>" +
+          state.members
+            .map(
+              (m) =>
+                '<tr><td><div class="member-line">' +
+                avatarHtml(m, true) +
+                "<span>" +
+                m.name +
+                "</span></div></td><td>" +
+                m.post +
+                "</td><td>" +
+                m.role +
+                "</td><td>" +
+                (m.active ? "Actif" : "Inactif") +
+                '</td><td><div class="actions"><button class="secondary" onclick="openMemberModal(\'' +
+                m.id +
+                '\')">Modifier</button><button class="secondary" onclick="toggleMember(\'' +
+                m.id +
+                "')\">" +
+                (m.active ? "Désactiver" : "Activer") +
+                "</button></div></td></tr>",
+            )
+            .join("") +
+          "</tbody></table>";
+      }
+      function renderSchedules() {
+        scheduleTable.innerHTML =
+          "<table><thead><tr><th>Membre</th>" +
+          dayNames.map((d) => "<th>" + d + "</th>").join("") +
+          "<th>Actions</th></tr></thead><tbody>" +
+          state.members
+            .map(
+              (m) =>
+                '<tr><td><div class="member-line">' +
+                avatarHtml(m, true) +
+                "<div><b>" +
+                m.name +
+                '</b><div class="meta">' +
+                m.post +
+                "</div></div></div></td>" +
+                (state.schedules[m.id] || makeSchedule())
+                  .map(
+                    (s) =>
+                      "<td>" +
+                      (s.work
+                        ? "<b>" +
+                          s.start +
+                          "-" +
+                          s.end +
+                          '</b><div class="meta">' +
+                          (s.note || "") +
+                          "</div>"
+                        : "Repos") +
+                      "</td>",
+                  )
+                  .join("") +
+                '<td><button class="secondary" onclick="openScheduleModal(\'' +
+                m.id +
+                "')\">Modifier</button></td></tr>",
+            )
+            .join("") +
+          "</tbody></table>";
+      }
+      function renderWeekly() {
+        weekPicker.value = selectedWeekStart;
+        const days = dayNames.map((d, i) => ({
+          name: d,
+          date: addDays(selectedWeekStart, i),
+        }));
+        weekBoard.innerHTML = days
+          .map((day) => {
+            const tasks = state.tasks.filter(
+  (t) =>
+    t.date === day.date &&
+    (currentUserIsAdmin() || t.memberId === state.currentUser)
+);
+            return (
+              '<div class="day-col"><h3>' +
+              day.name +
+              '<br><span class="meta">' +
+              day.date +
+              "</span></h3>" +
+              tasks
+                .map(
+                  (x) =>
+                    '<div class="mini-task priority-' +
+                    x.priority +
+                    '"><b>' +
+                    x.due +
+                    " · " +
+                    x.name +
+                    "</b><span>" +
+                    userName(x.memberId) +
+                    " · " +
+                    x.status +
+                    "</span></div>",
+                )
+                .join("") +
+              '<button class="secondary" onclick="openTaskModal(null,\'' +
+              day.date +
+              "')\">+ Ajouter</button></div>"
+            );
+          })
+          .join("");
+      }
+      function shiftWeek(n) {
+        selectedWeekStart = addDays(selectedWeekStart, n);
+        renderWeekly();
+      }
+      function setWeekFromInput(v) {
+        selectedWeekStart = mondayOf(v || today());
+        renderWeekly();
+      }
+      function duplicateWeek() {
+        if (!currentUserIsAdmin()) {
+          return;
+        }
+        const next = addDays(selectedWeekStart, 7);
+        if (
+          !confirm(
+            "Dupliquer toutes les tâches de cette semaine vers la semaine suivante ?",
+          )
+        )
+          return;
+        const copies = state.tasks
+          .filter(
+            (t) =>
+              t.date >= selectedWeekStart &&
+              t.date <= addDays(selectedWeekStart, 6),
+          )
+          .map((t) => ({
+            ...t,
+            id: uid(),
+            date: addDays(t.date, 7),
+            status: "a faire",
+            validatedAt: "",
+            validatedBy: "",
+            comment: "",
+          }));
+        state.tasks.push(...copies);
+        log(
+          "Duplication semaine",
+          copies.length + " tâches vers semaine du " + next,
+        );
+        selectedWeekStart = next;
+        render();
+      }
+      function renderTasks() {
+        const q = (taskSearch?.value || "").toLowerCase();
+        const f = taskFilter?.value || "all";
+        let list = state.tasks.filter(
+          (x) =>
+            (f === "all" || x.status === f) &&
+            (x.name.toLowerCase().includes(q) ||
+              userName(x.memberId).toLowerCase().includes(q) ||
+              x.date.includes(q)),
+        );
+        taskTable.innerHTML =
+          "<table><thead><tr><th>Tâche</th><th>Affectée à</th><th>Date prévue</th><th>Priorité</th><th>Statut</th><th>Actions</th></tr></thead><tbody>" +
+          list
+            .map(
+              (x) =>
+                "<tr><td><b>" +
+                x.name +
+                '</b><div class="meta">' +
+                x.desc +
+                "</div></td><td>" +
+                userName(x.memberId) +
+                "</td><td>" +
+                x.date +
+                " " +
+                x.due +
+                "</td><td>" +
+                x.priority +
+                "</td><td>" +
+                x.status +
+                '</td><td><div class="actions"><button class="secondary" onclick="openTaskModal(\'' +
+                x.id +
+                '\')">Modifier</button><button class="secondary" onclick="duplicateTask(\'' +
+                x.id +
+                '\')">Dupliquer</button><button class="danger" onclick="deleteTask(\'' +
+                x.id +
+                "')\">Supprimer</button></div></td></tr>",
+            )
+            .join("") +
+          "</tbody></table>";
+      }
+      function renderHistory() {
+        const q = (historySearch?.value || "").toLowerCase();
+        const rows = state.logs.filter((l) =>
+          (l.date + l.user + l.action + l.detail).toLowerCase().includes(q),
+        );
+        historyTable.innerHTML = rows.length
+          ? "<table><thead><tr><th>Date</th><th>Heure</th><th>Utilisateur</th><th>Action</th><th>Détail</th></tr></thead><tbody>" +
+            rows
+              .map(
+                (l) =>
+                  "<tr><td>" +
+                  l.date +
+                  "</td><td>" +
+                  l.time +
+                  "</td><td>" +
+                  l.user +
+                  "</td><td>" +
+                  l.action +
+                  "</td><td>" +
+                  l.detail +
+                  "</td></tr>",
+              )
+              .join("") +
+            "</tbody></table>"
+          : '<div class="empty">Aucun historique.</div>';
+      }
+      function renderReports() {
+        const byMember = {};
+        state.members.forEach(
+          (m) =>
+            (byMember[m.name] = state.tasks.filter(
+              (t) => t.memberId === m.id && t.status === "réalisée",
+            ).length),
+        );
+        stats.innerHTML = Object.entries(byMember)
+          .map(
+            ([k, v]) =>
+              '<div class="item"><div class="item-head"><span>' +
+              k +
+              "</span><b>" +
+              v +
+              " tâche(s) réalisée(s)</b></div></div>",
+          )
+          .join("");
+      }
+      function openMemberModal(id) {
+        if (!currentUserIsAdmin()()) {
+          return;
+        }
+        editingMember = id;
+        const m = id
+          ? member(id)
+          : {
+              name: "",
+              post: posts[0],
+              role: "employee",
+              active: true,
+              phone: "",
+              email: "",
+              profilePhoto: "",
+            };
+        memberForm.innerHTML =
+          '<div class="field full"><label class="label">Photo de profil</label><div class="profile-preview"><span id="profilePreview">' +
+          avatarHtml(m) +
+          '</span><div style="flex:1"><input name="profilePhotoFile" type="file" accept="image/*" onchange="previewProfilePhoto(this)"><input name="profilePhoto" type="hidden" value="' +
+          (m.profilePhoto || "") +
+          '"><button class="secondary" type="button" onclick="removeProfilePhoto()" style="margin-top:8px">Retirer la photo</button></div></div></div><div class="field"><label class="label">Nom</label><input name="name" value="' +
+          m.name +
+          '" required></div><div class="field"><label class="label">Poste</label><select name="post">' +
+          posts
+            .map(
+              (p) =>
+                "<option " +
+                (p === m.post ? "selected" : "") +
+                ">" +
+                p +
+                "</option>",
+            )
+            .join("") +
+          '</select></div><div class="field"><label class="label">Rôle</label><select name="role"><option value="employee">Employé</option><option value="admin" ' +
+          (m.role === "admin" ? "selected" : "") +
+          '>Administrateur</option></select></div><div class="field"><label class="label">Statut</label><select name="active"><option value="true">Actif</option><option value="false" ' +
+          (!m.active ? "selected" : "") +
+          '>Inactif</option></select></div><div class="field"><label class="label">Téléphone</label><input name="phone" value="' +
+          (m.phone || "") +
+          '"></div><div class="field"><label class="label">E-mail</label><input name="email" value="' +
+          (m.email || "") +
+          '"></div><div class="full row right"><button class="secondary" type="button" onclick="memberDialog.close()">Annuler</button><button>Enregistrer</button></div>';
+        memberDialog.showModal();
+      }
+      memberForm.onsubmit = async (e) => {
+        e.preventDefault();
+        const d = Object.fromEntries(new FormData(memberForm));
+        let profilePhoto = d.profilePhoto || "";
+        const fileInput = memberForm.querySelector('[name="profilePhotoFile"]');
+        const files = await readFiles(fileInput);
+        if (files[0]) profilePhoto = files[0].data;
+        const item = {
+          id: editingMember || uid(),
+          name: d.name,
+          post: d.post,
+          role: d.role,
+          active: d.active === "true",
+          phone: d.phone,
+          email: d.email,
+          profilePhoto,
+        };
+        if (editingMember) {
+          Object.assign(member(editingMember), item);
+
+          const { error } = await window.sb
+            .from("Members")
+            .update({
+              Nom: item.name,
+              Poste: item.post,
+              Role: item.role === "admin" ? "Administrateur" : "Employé",
+              Telephone: item.phone,
+              Actif: item.active,
+            })
+            .eq("id", editingMember);
+
+          console.log("Modification membre :", error);
+
+          log("Modification membre", item.name);
+        } else {
+          state.members.push(item);
+
+          const { error } = await window.sb.from("Members").insert({
+            Nom: item.name,
+            Poste: item.post,
+            Role: item.role === "admin" ? "Administrateur" : "Employé",
+            Telephone: item.phone,
+            Actif: item.active,
+          });
+
+          console.log("Création membre :", error);
+
+          state.schedules[item.id] = makeSchedule();
+
+          log("Création membre", item.name);
+        }
+        save();
+        memberDialog.close();
+        render();
+      };
+      async function toggleMember(id) {
+        if (!currentUserIsAdmin()) {
+          return;
+        }
+
+        const m = member(id);
+
+        m.active = !m.active;
+
+        const { error } = await window.sb
+          .from("Members")
+          .update({
+            Actif: m.active,
+          })
+          .eq("id", id);
+
+        console.log("Modification statut membre :", error);
+
+        log(m.active ? "Activation membre" : "Désactivation membre", m.name);
+
+        save();
+        render();
+      }
+      async function uploadTaskPhotos(files) {
+        console.log("Upload lancé :", files);
+        const urls = [];
+
+        for (const file of files) {
+          const fileName =
+            Date.now() +
+            "_" +
+            Math.random().toString(36).substring(2) +
+            "_" +
+            file.name;
+
+          const { error } = await window.sb.storage
+            .from("task-photos")
+            .upload(fileName, file);
+
+          console.log("Upload photo :", error);
+
+          if (!error) {
+            const { data } = window.sb.storage
+              .from("task-photos")
+              .getPublicUrl(fileName);
+
+            urls.push(data.publicUrl);
+          }
+        }
+
+        return urls;
+      }
+      async function previewProfilePhoto(input) {
+        const files = await readFiles(input);
+        if (files[0]) {
+          memberForm.querySelector('[name="profilePhoto"]').value =
+            files[0].data;
+          profilePreview.innerHTML =
+            '<img class="avatar" src="' +
+            files[0].data +
+            '" alt="Photo de profil">';
+        }
+      }
+      function removeProfilePhoto() {
+        memberForm.querySelector('[name="profilePhoto"]').value = "";
+        profilePreview.innerHTML = '<span class="avatar">?</span>';
+        const file = memberForm.querySelector('[name="profilePhotoFile"]');
+        if (file) file.value = "";
+      }
+      function openTaskModal(id, date) {
+        if (!currentUserIsAdmin()) {
+          return;
+        }
+        editingTask = id;
+        const defaultMember = state.members.length ? state.members[0].id : "";
+
+        const x = id
+          ? state.tasks.find((t) => t.id === id)
+          : t(
+              "",
+              "",
+              defaultMember,
+              posts[0],
+              "journalière",
+              "08:00",
+              "normale",
+              false,
+              false,
+              false,
+              false,
+              date || today(),
+            );
+        taskForm.innerHTML =
+          '<div class="field full"><label class="label">Nom de la tâche</label><input name="name" value="' +
+          x.name +
+          '" required></div><div class="field full"><label class="label">Description</label><textarea name="desc">' +
+          x.desc +
+          '</textarea></div><div class="field"><label class="label">Collaborateur</label><select name="memberId">' +
+          state.members
+            .filter((m) => m.active)
+            .map(
+              (m) =>
+                '<option value="' +
+                m.id +
+                '" ' +
+                (m.id === x.memberId ? "selected" : "") +
+                ">" +
+                m.name +
+                "</option>",
+            )
+            .join("") +
+          '</select></div><div class="field"><label class="label">Poste</label><select name="post">' +
+          posts
+            .map(
+              (p) =>
+                "<option " +
+                (p === x.post ? "selected" : "") +
+                ">" +
+                p +
+                "</option>",
+            )
+            .join("") +
+          '</select></div><div class="field"><label class="label">Fréquence</label><select name="freq">' +
+          ["journalière", "hebdomadaire", "mensuelle", "ponctuelle"]
+            .map(
+              (p) =>
+                "<option " +
+                (p === x.freq ? "selected" : "") +
+                ">" +
+                p +
+                "</option>",
+            )
+            .join("") +
+          '</select></div><div class="field"><label class="label">Date précise</label><input name="date" type="date" value="' +
+          (x.date || today()) +
+          '"></div><div class="field"><label class="label">Heure prévue</label><input name="due" type="time" value="' +
+          x.due +
+          '"></div><div class="field"><label class="label">Priorité</label><select name="priority">' +
+          ["faible", "normale", "importante", "urgente"]
+            .map(
+              (p) =>
+                "<option " +
+                (p === x.priority ? "selected" : "") +
+                ">" +
+                p +
+                "</option>",
+            )
+            .join("") +
+          '</select></div><div class="field"><label class="label">Statut</label><select name="status">' +
+          [
+            "a faire",
+            "en cours",
+            "réalisée",
+            "en retard",
+            "annulée",
+            "reportée",
+          ]
+            .map(
+              (p) =>
+                "<option " +
+                (p === x.status ? "selected" : "") +
+                ">" +
+                p +
+                "</option>",
+            )
+            .join("") +
+          '</select></div><div class="field"><label class="label">Options</label><select name="options" multiple><option value="photo" ' +
+          (x.photo ? "selected" : "") +
+          '>Photo</option><option value="signature" ' +
+          (x.signature ? "selected" : "") +
+          '>Signature</option><option value="attach" ' +
+          (x.attach ? "selected" : "") +
+          '>Pièce jointe</option><option value="barcode" ' +
+          (x.barcode ? "selected" : "") +
+          '>Code-barres</option></select></div><div class="field full"><label class="label">Photos de la tâche</label><input name="taskPhotoFiles" type="file" accept="image/*" multiple><div class="meta">Les photos existantes sont conservées. Ajoute ici les nouvelles photos à joindre.</div>' +
+          photosHtml(x) +
+          '</div><div class="full row right"><button class="secondary" type="button" onclick="taskDialog.close()">Annuler</button><button>Enregistrer</button></div>';
+        taskDialog.showModal();
+      }
+      taskForm.onsubmit = async (e) => {
+        e.preventDefault();
+        const fd = new FormData(taskForm);
+        const opts = fd.getAll("options");
+        const existing = editingTask
+          ? state.tasks.find((t) => t.id === editingTask).taskPhotos || []
+          : [];
+        const added = await readFiles(
+          taskForm.querySelector('[name="taskPhotoFiles"]'),
+        );
+        console.log(
+          "Fichiers sélectionnés :",
+          taskForm.querySelector('[name="taskPhotoFiles"]').files,
+        );
+        const uploadedUrls = await uploadTaskPhotos(
+          taskForm.querySelector('[name="taskPhotoFiles"]').files,
+        );
+        const item = {
+          id: editingTask || uid(),
+          name: fd.get("name"),
+          desc: fd.get("desc"),
+          memberId: fd.get("memberId"),
+          post: fd.get("post"),
+          freq: fd.get("freq"),
+          date: fd.get("date"),
+          due: fd.get("due"),
+          priority: fd.get("priority"),
+          status: fd.get("status"),
+          comment: "",
+          validatedAt: "",
+          validatedBy: "",
+          photo: opts.includes("photo"),
+          signature: opts.includes("signature"),
+          attach: opts.includes("attach"),
+          barcode: opts.includes("barcode"),
+          taskPhotos: [...existing, ...added],
+          photo_urls: uploadedUrls,
+        };
+        if (editingTask) {
+          Object.assign(
+            state.tasks.find((t) => t.id === editingTask),
+            item,
+          );
+
+          const { error } = await window.sb
+            .from("Tasks")
+            .update({
+              titre: item.name,
+              description: item.desc,
+              frequence: item.freq,
+              heure_prevue: item.due,
+              priorite: item.priority,
+              assignee: item.memberId,
+              photo_urls: item.photo_urls,
+              completed: item.status === "réalisée",
+            })
+            .eq("id", item.id);
+
+          console.log("Modification :", error);
+
+          log("Modification tâche", item.name);
+        } else {
+          state.tasks.push(item);
+
+          const { error } = await window.sb.from("Tasks").insert({
             titre: item.name,
             description: item.desc,
             frequence: item.freq,
             heure_prevue: item.due,
             priorite: item.priority,
             assignee: item.memberId,
+            date: item.date,
             photo_urls: item.photo_urls,
-            completed: item.status === "réalisée"
-        })
-        .eq("id", item.id);
+            completed: false,
+          });
+          console.log("Insertion tâche :", error);
 
-    console.log("Modification :", error);
+          log("Création tâche", item.name);
+        }
+        if (added.length)
+          log(
+            "Ajout photo tâche",
+            item.name + " : " + added.length + " photo(s)",
+          );
+        save();
+        taskDialog.close();
+        render();
+      };
+      function openScheduleModal(memberId) {
+        if (!currentUserIsAdmin()) {
+          return;
+        }
+        const mid = memberId || state.currentUser;
+        scheduleForm.dataset.memberId = mid;
+        const m = member(mid);
+        const schedule = state.schedules[mid] || makeSchedule();
+        scheduleForm.innerHTML =
+          '<div class="field full"><label class="label">Membre</label><select name="memberId" onchange="scheduleDialog.close(); openScheduleModal(this.value)">' +
+          state.members
+            .map(
+              (x) =>
+                '<option value="' +
+                x.id +
+                '" ' +
+                (x.id === mid ? "selected" : "") +
+                ">" +
+                x.name +
+                "</option>",
+            )
+            .join("") +
+          "</select></div>" +
+          schedule
+            .map(
+              (s, i) =>
+                '<div class="field"><label class="label">' +
+                s.day +
+                '</label><select name="work' +
+                i +
+                '"><option value="true" ' +
+                (s.work ? "selected" : "") +
+                '>Travail</option><option value="false" ' +
+                (!s.work ? "selected" : "") +
+                '>Repos</option></select></div><div class="field"><label class="label">Horaires</label><div class="split"><input name="start' +
+                i +
+                '" type="time" value="' +
+                s.start +
+                '"><input name="end' +
+                i +
+                '" type="time" value="' +
+                s.end +
+                '"></div></div><div class="field"><label class="label">Pause</label><input name="break' +
+                i +
+                '" value="' +
+                (s.break || "") +
+                '"></div><div class="field"><label class="label">Note</label><input name="note' +
+                i +
+                '" value="' +
+                (s.note || "") +
+                '"></div>',
+            )
+            .join("") +
+          '<div class="full row right"><button class="secondary" type="button" onclick="scheduleDialog.close()">Annuler</button><button>Enregistrer</button></div>';
+        scheduleDialog.showModal();
+      }
+      scheduleForm.onsubmit = async (e) => {
+        e.preventDefault();
 
-    log('Modification tâche', item.name);
+        const fd = new FormData(scheduleForm);
+        const mid = fd.get("memberId") || scheduleForm.dataset.memberId;
 
-}else{
-    state.tasks.push(item);
+        const schedule = dayNames.map((d, i) => ({
+          day: d,
+          work: fd.get("work" + i) === "true",
+          start: fd.get("start" + i),
+          end: fd.get("end" + i),
+          break: fd.get("break" + i),
+          note: fd.get("note" + i),
+        }));
 
-    const { error } = await window.sb
-        .from("Tasks")
-       .insert({
-    titre: item.name,
-    description: item.desc,
-    frequence: item.freq,
-    heure_prevue: item.due,
-    priorite: item.priority,
-    assignee: item.memberId,
-    date: item.date,
-    photo_urls: item.photo_urls,
-    completed: false
-});
-    console.log("Insertion tâche :", error);
+        state.schedules[mid] = schedule;
 
-    log('Création tâche', item.name);
-} if(added.length) log('Ajout photo tâche',item.name+' : '+added.length+' photo(s)'); save(); taskDialog.close(); render()};
-function openScheduleModal(memberId){if(!isAdminUnlocked()){requestAdmin(); return} const mid=memberId||state.currentUser; scheduleForm.dataset.memberId=mid; const m=member(mid); const schedule=state.schedules[mid]||makeSchedule(); scheduleForm.innerHTML='<div class="field full"><label class="label">Membre</label><select name="memberId" onchange="scheduleDialog.close(); openScheduleModal(this.value)">'+state.members.map(x=>'<option value="'+x.id+'" '+(x.id===mid?'selected':'')+'>'+x.name+'</option>').join('')+'</select></div>'+schedule.map((s,i)=>'<div class="field"><label class="label">'+s.day+'</label><select name="work'+i+'"><option value="true" '+(s.work?'selected':'')+'>Travail</option><option value="false" '+(!s.work?'selected':'')+'>Repos</option></select></div><div class="field"><label class="label">Horaires</label><div class="split"><input name="start'+i+'" type="time" value="'+s.start+'"><input name="end'+i+'" type="time" value="'+s.end+'"></div></div><div class="field"><label class="label">Pause</label><input name="break'+i+'" value="'+(s.break||'')+'"></div><div class="field"><label class="label">Note</label><input name="note'+i+'" value="'+(s.note||'')+'"></div>').join('')+'<div class="full row right"><button class="secondary" type="button" onclick="scheduleDialog.close()">Annuler</button><button>Enregistrer</button></div>'; scheduleDialog.showModal()}
-scheduleForm.onsubmit = async e => {
-    e.preventDefault();
-
-    const fd = new FormData(scheduleForm);
-    const mid = fd.get('memberId') || scheduleForm.dataset.memberId;
-
-    const schedule = dayNames.map((d,i)=>({
-        day:d,
-        work:fd.get('work'+i)==='true',
-        start:fd.get('start'+i),
-        end:fd.get('end'+i),
-        break:fd.get('break'+i),
-        note:fd.get('note'+i)
-    }));
-
-    state.schedules[mid] = schedule;
-
-    const { error } = await window.sb
-        .from("Schedules")
-        .upsert({
-            member_id: mid,
-            planning: schedule
+        const { error } = await window.sb.from("Schedules").upsert({
+          member_id: mid,
+          planning: schedule,
         });
 
-    console.log("Enregistrement planning :", error);
+        console.log("Enregistrement planning :", error);
 
-    log('Modification emploi du temps', userName(mid));
+        log("Modification emploi du temps", userName(mid));
 
-    save();
-    scheduleDialog.close();
-    render();
+        save();
+        scheduleDialog.close();
+        render();
+      };
+      async function addTaskPhotos(id) {
+        const task = state.tasks.find((t) => t.id === id);
+        if (!task) return;
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = "image/*";
+        input.multiple = true;
+        input.onchange = async () => {
+          const added = await readFiles(input);
+          if (!added.length) return;
+          task.taskPhotos ||= [];
+          task.taskPhotos.push(...added);
+          log(
+            "Ajout photo tâche",
+            task.name + " : " + added.length + " photo(s)",
+          );
+          save();
+          render();
+        };
+        input.click();
+      }
+      function exportReport() {
+        const rows = [
+          [
+            "Date",
+            "Tâche",
+            "Membre",
+            "Poste",
+            "Heure prévue",
+            "Priorité",
+            "Statut",
+            "Validation",
+            "Validé par",
+          ],
+        ].concat(
+          state.tasks.map((t) => [
+            t.date,
+            t.name,
+            userName(t.memberId),
+            t.post,
+            t.due,
+            t.priority,
+            t.status,
+            t.validatedAt,
+            t.validatedBy,
+          ]),
+        );
+        const csv = rows
+          .map((r) =>
+            r
+              .map((v) => '"' + String(v || "").replaceAll('"', '""') + '"')
+              .join(";"),
+          )
+          .join("\n");
+        download("rapport-suivi-stock.csv", csv, "text/csv");
+      }
+      function exportJson() {
+        download(
+          "sauvegarde-suivi-stock.json",
+          JSON.stringify(state, null, 2),
+          "application/json",
+        );
+      }
+      function download(name, content, type) {
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(new Blob([content], { type }));
+        a.download = name;
+        a.click();
+        URL.revokeObjectURL(a.href);
+      }
+      function clearDemo() {
+        if (confirm("Réinitialiser toutes les données ?")) {
+          localStorage.removeItem(storeKey);
+          localStorage.removeItem(oldKey);
+          state = seed();
+          save();
+          active = "myday";
+          render();
+        }
+      }
+      async function login() {
+        const username = document.getElementById("loginUsername").value;
+
+        const password = document.getElementById("loginPassword").value;
+
+        const { data, error } = await window.sb
+          .from("Members")
+          .select("*")
+          .eq("username", username)
+          .eq("password", password)
+          .single();
+
+        if (error || !data) {
+          alert("Identifiant ou mot de passe incorrect");
+          return;
+        }
+
+        state.currentUser = data.id;
+
+        sessionStorage.setItem("loggedUser", JSON.stringify(data));
+
+        if (data.role_access === "admin") {
+  active = "home";
+} else {
+  active = "home";
 }
-async function addTaskPhotos(id){const task=state.tasks.find(t=>t.id===id); if(!task)return; const input=document.createElement('input'); input.type='file'; input.accept='image/*'; input.multiple=true; input.onchange=async()=>{const added=await readFiles(input); if(!added.length)return; task.taskPhotos ||= []; task.taskPhotos.push(...added); log('Ajout photo tâche',task.name+' : '+added.length+' photo(s)'); save(); render()}; input.click()}
-function exportReport(){const rows=[['Date','Tâche','Membre','Poste','Heure prévue','Priorité','Statut','Validation','Validé par']].concat(state.tasks.map(t=>[t.date,t.name,userName(t.memberId),t.post,t.due,t.priority,t.status,t.validatedAt,t.validatedBy])); const csv=rows.map(r=>r.map(v=>'"'+String(v||'').replaceAll('"','""')+'"').join(';')).join('\n'); download('rapport-suivi-stock.csv',csv,'text/csv')} function exportJson(){download('sauvegarde-suivi-stock.json',JSON.stringify(state,null,2),'application/json')} function download(name,content,type){const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([content],{type})); a.download=name; a.click(); URL.revokeObjectURL(a.href)} function clearDemo(){if(confirm('Réinitialiser toutes les données ?')){localStorage.removeItem(storeKey); localStorage.removeItem(oldKey); sessionStorage.removeItem('adminUnlocked'); state=seed(); save(); active='myday'; render()}} function lockAdmin(){sessionStorage.removeItem('adminUnlocked'); active='myday'; render()} async function login(){
+        save();
+        render();
 
-    const username =
-        document.getElementById('loginUsername').value;
-
-    const password =
-        document.getElementById('loginPassword').value;
-
-
-    const {data,error}=await window.sb
-        .from("Members")
-        .select("*")
-        .eq("username",username)
-        .eq("password",password)
-        .single();
-
-
-    if(error || !data){
-
-        alert("Identifiant ou mot de passe incorrect");
-        return;
-    }
-
-
-    state.currentUser=data.id;
-
-    sessionStorage.setItem(
-        "loggedUser",
-        JSON.stringify(data)
-    );
-
-
-    if(data.role_access==="admin"){
-
-        sessionStorage.setItem(
-            "adminUnlocked",
-            "true"
+        console.log("Connexion réussie :", data);
+      }
+      console.log("FONCTION LOGIN CHARGEE");
+      function changeAdminCode() {
+        if (!currentUserIsAdmin()) {
+          return;
+        }
+        const next = prompt(
+          "Nouveau code administrateur",
+          state.settings.adminCode,
         );
+        if (next) {
+          state.settings.adminCode = next;
+          log("Modification code admin", "Code administrateur modifié");
+          save();
+          alert("Code administrateur modifié");
+        }
+      }
+      const loginBtn = document.getElementById("loginBtn");
 
-        active="dashboard";
+      loginBtn.onclick = login;
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    }else{
+    <script>
+      const SUPABASE_URL = "https://kljyljxfexitunrumixq.supabase.co";
 
-        sessionStorage.removeItem(
-            "adminUnlocked"
-        );
+      const SUPABASE_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtsanlsanhmZXhpdHVucnVtaXhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQxMDg0NzQsImV4cCI6MjA5OTY4NDQ3NH0.D0uwd-0mnWt1e6pL2GeAHF53kR7ky-PJrnuFKD2O4Wk";
 
-        active="myday";
-    }
+      window.sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+      console.log("Supabase connecté");
+      console.log("VERSION TEST LOGIN");
+
+      (async () => {
+        await loadMembersFromSupabase();
+
+        await loadTasksFromSupabase();
+
+        await loadSchedulesFromSupabase();
+
+        await loadAttendanceFromSupabase();
+
+        save();
+
+        render();
+      })();
+      function closeMenu() {
+  sideMenu.classList.remove("open");
+  menuOverlay.classList.remove("open");
+  menuBtn.textContent = "☰";
+}
+
+const menuBtn = document.getElementById("menuBtn");
+const sideMenu = document.getElementById("sideMenu");
+const menuOverlay = document.getElementById("menuOverlay");
 
 
-    save();
-    render();
+menuBtn.onclick = function () {
 
-    console.log(
-        "Connexion réussie :",
-        data
-    );
-} console.log("FONCTION LOGIN CHARGEE");
- function changeAdminCode(){if(!isAdminUnlocked()){requestAdmin(); return} const next=prompt('Nouveau code administrateur',state.settings.adminCode); if(next){state.settings.adminCode=next; log('Modification code admin','Code administrateur modifié'); save(); alert('Code administrateur modifié')}} const loginBtn = document.getElementById('loginBtn');
+  sideMenu.classList.toggle("open");
+  menuOverlay.classList.toggle("open");
 
-loginBtn.onclick = login;
+  if (sideMenu.classList.contains("open")) {
+    menuBtn.textContent = "×";
+  } else {
+    menuBtn.textContent = "☰";
+  }
+
+};
 
 
-</script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+menuOverlay.onclick = function () {
 
-<script>
-const SUPABASE_URL = "https://kljyljxfexitunrumixq.supabase.co";
+  closeMenu();
 
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtsanlsanhmZXhpdHVucnVtaXhxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQxMDg0NzQsImV4cCI6MjA5OTY4NDQ3NH0.D0uwd-0mnWt1e6pL2GeAHF53kR7ky-PJrnuFKD2O4Wk";
-
-window.sb = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-);
-
-console.log("Supabase connecté");
-console.log("VERSION TEST LOGIN");
-
-(async () => {
-
-    await loadMembersFromSupabase();
-
-    await loadTasksFromSupabase();
-
-    await loadSchedulesFromSupabase();
-
-    await loadAttendanceFromSupabase();
-
-    save();
-
-    render();
-
-})();
-</script>
-</body>
+};
+    </script>
+  </body>
 </html>
