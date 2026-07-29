@@ -152,6 +152,35 @@
   align-items:center;
   text-align:center;
 }
+.brand-logo{
+
+    width:70px;
+    height:70px;
+
+    border-radius:50%;
+
+    overflow:hidden;
+
+    background:white;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    box-shadow:0 6px 18px rgba(0,0,0,.15);
+
+    flex-shrink:0;
+
+}
+
+.brand-logo img{
+
+    width:100%;
+    height:100%;
+
+    object-fit:cover;
+
+}
       .mark {
   width: 52px;
   height: 52px;
@@ -331,12 +360,64 @@
         grid-template-columns: repeat(3, 1fr);
       }
       .week-grid {
-        display: grid;
-        grid-template-columns: repeat(7, minmax(150px, 1fr));
-        gap: 10px;
-        overflow: auto;
-        padding-bottom: 6px;
-      }
+
+    display:grid;
+
+    grid-template-columns:repeat(7, minmax(280px, 1fr));
+
+    gap:16px;
+
+    overflow-x:auto;
+
+    padding:10px;
+
+}
+      .day-col {
+
+    background:#ffffff;
+
+    border-radius:14px;
+
+    padding:12px;
+
+    min-height:350px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:12px;
+
+}
+
+
+.day-col h3 {
+
+    text-align:center;
+
+    margin:0 0 10px;
+
+    line-height:1.3;
+
+}
+
+
+.day-col .task-card {
+
+    width:100%;
+
+    box-sizing:border-box;
+
+    overflow:hidden;
+
+}
+
+
+.day-col .task-card + .task-card {
+
+    margin-top:10px;
+
+}
       .day-col {
         min-width: 150px;
         border: 1px solid var(--line);
@@ -648,17 +729,32 @@ color:var(--blue);
 
 }
 .profile-photo {
-  width: 90px;
-  height: 90px;
-  border-radius: 12px;
-  background: var(--blue);
-  color: white;
-  display: grid;
-  place-items: center;
-  font-size: 36px;
-  font-weight: 800;
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--blue);
+    color: white;
+    font-size: 36px;
+    font-weight: 800;
+}
+.profile-photo .avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
 }
 
+.profile-photo .avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
 .profile-info h2 {
   margin: 0 0 6px;
   font-size: 24px;
@@ -722,6 +818,17 @@ color:var(--blue);
           overflow: visible;
         }
         .day-col {
+
+    min-width:280px;
+
+    background:#fff;
+
+    border-radius:14px;
+
+    padding:14px;
+
+}
+        .day-col {
           min-width: 0;
         }
       }
@@ -744,18 +851,944 @@ color:var(--blue);
           border: 1px solid #bbb;
         }
       }
+      .alert-center{
+
+    background:white;
+
+    border-radius:16px;
+
+    padding:18px;
+
+    margin:20px 0;
+
+    box-shadow:var(--shadow);
+
+}
+
+.alert-center h3{
+
+    margin-bottom:15px;
+
+}
+
+.alert-item{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:12px 0;
+
+    border-bottom:1px solid #ececec;
+
+}
+
+.alert-item:last-child{
+
+    border-bottom:none;
+
+}
+
+.alert-item.critical strong{
+
+    color:#d63031;
+
+}
+
+.alert-item.warning strong{
+
+    color:#f39c12;
+
+}
+
+.alert-center.success{
+
+    border-left:5px solid #2ecc71;
+
+}
+.alert-center{
+    background:white;
+    border-radius:16px;
+    padding:15px;
+    margin-top:20px;
+}
+
+
+.alert-center summary{
+    cursor:pointer;
+    display:flex;
+    justify-content:space-between;
+    font-size:18px;
+    font-weight:700;
+}
+
+
+.alert-content{
+    margin-top:15px;
+}
+
+
+.alert-item{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+
+    background:#fff;
+
+    padding:14px;
+
+    margin-bottom:12px;
+
+    border-radius:12px;
+
+    border-left:5px solid #dc2626;
+
+    box-shadow:0 2px 6px rgba(0,0,0,0.08);
+}
+
+
+.alert-item strong{
+
+    font-size:16px;
+
+    color:#111827;
+
+}
+
+
+.alert-item span{
+
+    font-size:14px;
+
+    color:#6b7280;
+
+}
+.alert-center summary{
+    list-style:none;
+    cursor:pointer;
+}
+
+
+.alert-center summary::-webkit-details-marker{
+    display:none;
+}
+
+
+.alert-title{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+
+.alert-title h3{
+    margin:0;
+    font-size:20px;
+}
+
+
+.alert-title p{
+    margin:5px 0 0;
+    color:#666;
+    font-size:14px;
+}
+
+
+.alert-toggle{
+    background:#f3f4f6;
+    padding:8px 12px;
+    border-radius:20px;
+    font-size:14px;
+}
+
+
+.alert-center[open] .alert-toggle{
+    transform:rotate(180deg);
+}
+.alert-group{
+
+    margin-top:20px;
+
+}
+
+
+.alert-group h4{
+
+    margin-bottom:12px;
+
+    font-size:15px;
+
+}
+.alert-item.warning{
+
+    border-left-color:#f59e0b;
+
+}
+
+
+.alert-item.critical{
+
+    border-left-color:#dc2626;
+
+}
+.logout-btn {
+
+    margin-top:15px;
+
+    padding:10px 18px;
+
+    border:none;
+
+    border-radius:8px;
+
+    background:#26d0dc;
+
+    color:white;
+
+    cursor:pointer;
+
+    font-weight:600;
+
+}
+
+.logout-btn:hover {
+
+    opacity:0.85;
+
+}
+.sidebar-logout {
+
+    width:100%;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    padding:12px 18px;
+
+    border:none;
+
+    background:none;
+
+    color:#dc2626;
+
+    font-size:15px;
+
+    cursor:pointer;
+
+}
+
+
+.sidebar-logout:hover {
+
+    background:#f8fafc;
+
+}
+
+
+.icon-exit {
+
+    font-size:20px;
+
+}
+.employee-summary{
+
+    margin-top:25px;
+
+}
+
+.summary-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(3,1fr);
+
+    gap:15px;
+
+}
+
+.summary-card{
+
+    background:white;
+
+    border-radius:14px;
+
+    padding:18px;
+
+    text-align:center;
+
+    box-shadow:0 6px 18px rgba(0,0,0,.08);
+
+}
+
+.summary-card strong{
+
+    display:block;
+
+    font-size:28px;
+
+    color:#2c5aa0;
+
+}
+
+.summary-card span{
+
+    color:#666;
+
+    font-size:14px;
+
+}
+.employee-tasks,
+.employee-schedule,
+.employee-summary{
+
+    margin-top:25px;
+
+}
+
+
+.employee-task-card{
+
+    background:white;
+
+    border-radius:12px;
+
+    padding:15px;
+
+    margin-bottom:12px;
+
+    box-shadow:0 3px 10px rgba(0,0,0,0.08);
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+}
+
+
+.task-name{
+
+    font-weight:600;
+
+    max-width:70%;
+
+}
+
+
+.task-status{
+
+    font-size:13px;
+
+    padding:5px 10px;
+
+    border-radius:20px;
+
+}
+
+
+.task-status.en\ retard{
+
+    background:#ffe5e5;
+
+    color:#c62828;
+
+}
+
+
+.task-status.réalisée{
+
+    background:#e5f7e8;
+
+    color:#2e7d32;
+
+}
+
+
+.employee-schedule{
+
+    background:white;
+
+    padding:18px;
+
+    border-radius:12px;
+
+    box-shadow:0 3px 10px rgba(0,0,0,0.08);
+
+}
+
+
+.employee-summary{
+
+    background:white;
+
+    padding:18px;
+
+    border-radius:12px;
+
+}
+
+
+.summary-grid{
+
+    margin-top:15px;
+
+}
+.task-done{
+    border-left:6px solid #22c55e;
+    background:#f0fdf4;
+    opacity:.92;
+}
+
+.task-done .title{
+    text-decoration:line-through;
+    color:#166534;
+}
+.task-photos{
+
+    display:flex;
+
+    gap:10px;
+
+    margin-top:10px;
+
+    flex-wrap:wrap;
+
+}
+
+.task-photo{
+
+    width:90px;
+
+    height:90px;
+
+    object-fit:cover;
+
+    border-radius:12px;
+
+    border:1px solid #ddd;
+
+}
+.repos{
+
+    color:#16a34a;
+
+    font-weight:700;
+
+}
+.summary-card{
+
+    border-radius:16px;
+
+    padding:18px;
+
+    background:white;
+
+    box-shadow:0 6px 20px rgba(0,0,0,.08);
+
+    transition:.25s;
+
+}
+
+.summary-card:hover{
+
+    transform:translateY(-3px);
+
+}
+
+.summary-card strong{
+
+    font-size:34px;
+
+    color:#0f766e;
+
+}
+
+.summary-card span{
+
+    display:block;
+
+    margin-top:6px;
+
+    color:#666;
+
+}
+.admin-alert-center summary {
+    list-style: none;
+}
+
+.admin-alert-center summary::-webkit-details-marker {
+    display: none;
+}
+.alert-summary {
+    cursor: pointer;
+    user-select: none;
+}
+.alert-chevron {
+    color: #64748b;
+    font-size: 16px;
+    transition: transform 0.25s ease;
+    display: inline-block;
+}
+
+.admin-alert-center[open] .alert-chevron {
+    transform: rotate(180deg);
+}
+.alert-content {
+    animation: alertOpen 0.25s ease;
+}
+
+
+@keyframes alertOpen {
+
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+.admin-alert-list,
+.alert-content{
+
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    margin-top:12px;
+
+}
+
+.admin-alert{
+
+    display:flex;
+    align-items:center;
+    gap:14px;
+
+    padding:14px 16px;
+
+    border-radius:12px;
+
+    background:#ffffff;
+
+    border:1px solid #e5e7eb;
+
+    box-shadow:0 2px 6px rgba(0,0,0,.05);
+
+}
+
+.admin-alert.critical{
+
+    border-left:5px solid #dc2626;
+
+}
+
+.admin-alert.warning{
+
+    border-left:5px solid #f59e0b;
+
+}
+
+.admin-alert.success{
+
+    border-left:5px solid #16a34a;
+
+}
+
+.admin-alert-body{
+
+    flex:1;
+
+}
+
+.admin-alert-title{
+
+    font-weight:600;
+    margin-bottom:4px;
+
+}
+
+.admin-alert-message{
+
+    color:#6b7280;
+    font-size:.92rem;
+
+}
+
+.admin-alert-icon{
+
+    font-size:22px;
+
+}
+.admin-alert-wrapper{
+
+    margin-top:20px;
+
+}
+.admin-performance-wrapper{
+    margin-top:20px;
+}
+.admin-alert-center{
+
+    margin-top:20px;
+    background:white;
+    border-radius:18px;
+    padding:20px;
+    box-shadow:0 8px 25px rgba(0,0,0,0.08);
+
+}
+
+
+.alert-header{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+
+}
+
+
+.alert-header h2{
+
+    margin:0;
+    font-size:20px;
+
+}
+
+
+.alert-header p{
+
+    margin:5px 0 0;
+    color:#666;
+
+}
+
+
+.alert-total{
+
+    width:45px;
+    height:45px;
+    border-radius:50%;
+    background:#fee2e2;
+    color:#dc2626;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:bold;
+    font-size:18px;
+
+}
+
+
+
+.alert-section{
+
+    margin-top:18px;
+    border-top:1px solid #eee;
+    padding-top:15px;
+
+}
+
+
+.alert-section-title{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+}
+
+
+.alert-section-title h3{
+
+    margin:0;
+    font-size:16px;
+
+}
+
+
+.alert-item{
+
+    display:flex;
+    align-items:center;
+    gap:15px;
+    padding:12px;
+    margin-top:10px;
+    background:#f8fafc;
+    border-radius:12px;
+
+}
+
+
+.alert-item-icon{
+
+    font-size:22px;
+
+}
+
+
+.alert-item-content{
+
+    flex:1;
+
+}
+
+
+.alert-item-content strong{
+
+    display:block;
+
+}
+
+
+.alert-item-content p{
+
+    margin:4px 0 0;
+    color:#64748b;
+    font-size:14px;
+
+}
+.alert-toggle{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    cursor:pointer;
+
+}
+
+
+.alert-toggle h2{
+
+    margin:0;
+
+}
+
+
+.alert-toggle p{
+
+    margin:5px 0 0;
+    color:#64748b;
+
+}
+
+
+.alert-toggle-right{
+
+    display:flex;
+    align-items:center;
+    gap:15px;
+
+}
+
+
+.alert-arrow{
+
+    font-size:18px;
+    transition:transform .3s ease;
+
+}
+
+
+.alert-body{
+
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .4s ease;
+
+}
+
+
+.admin-alert-center.open .alert-body{
+
+    max-height:5000px;
+
+}
+
+
+.admin-alert-center.open .alert-arrow{
+
+    transform:rotate(180deg);
+
+}
+.alert-item{
+
+    background:#f8fafc;
+    border-radius:14px;
+    padding:15px;
+    margin-top:12px;
+
+}
+
+
+.alert-main{
+
+    text-align:center;
+
+}
+
+
+.alert-name{
+
+    font-size:16px;
+    font-weight:700;
+    margin-bottom:8px;
+
+}
+
+
+.alert-main p{
+
+    margin:0 0 12px;
+    color:#64748b;
+    font-size:14px;
+
+}
+
+
+.alert-main .badge{
+
+    display:inline-flex;
+
+}
+.performance-card{
+
+    background:white;
+    border-radius:18px;
+    padding:20px;
+    margin-bottom:20px;
+    box-shadow:0 8px 25px rgba(0,0,0,.08);
+
+}
+
+
+.performance-card h3{
+
+    margin-bottom:20px;
+
+}
+
+
+.performance-circle-container{
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    gap:35px;
+
+    flex-wrap:wrap;
+
+}
+
+
+.performance-circle{
+
+    width:120px;
+    height:120px;
+    border-radius:50%;
+
+    background:#f8fafc;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+
+    text-align:center;
+
+}
+
+
+.performance-circle strong{
+
+    font-size:28px;
+    font-weight:700;
+    line-height:1;
+
+}
+
+
+.performance-circle span{
+
+    margin-top:8px;
+
+    font-size:14px;
+    font-weight:700;
+
+    color:#334155;
+
+    max-width:90px;
+
+    line-height:1.2;
+
+}
+.welcome-card{
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+
+    text-align:center;
+
+    gap:12px;
+
+}
+
+
+.welcome-logo{
+
+    width:90px;
+
+    height:90px;
+}
+ .danger {
+    background: #dc2626;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.danger:hover {
+    background: #b91c1c;
+} 
     </style>
   </head>
-  <body>
-    <header id="loginHeader">
+  <body style="visibility:hidden;">
+    <header id="loginHeader" style="display:none;">
       <div class="topbar">
-        <div class="brand">
-          <div class="mark">ST</div>
-          <div>
-            <h1>Suivi Stock & Économat</h1>
-            <p>Pointage, tâches journalières, emplois du temps et rapports</p>
-          </div>
-        </div>
+      <div class="brand">
+
+    <div class="brand-logo">
+
+        <img
+            src="assets/images/logo.png"
+            alt="Cercle de l'Union"
+        >
+
+    </div>
+
+    <div>
+
+        <h1>Économat</h1>
+
+        <p>Cercle de l'Union</p>
+
+    </div>
+
+</div>  
         <div class="login-box">
         <div class="session">
           <div class="field">
@@ -778,16 +1811,30 @@ color:var(--blue);
         </div>
       </div>
     </header>
-    <main id="appMain">
-      <button id="menuBtn" class="menu-btn">☰</button>
+    <main id="appMain" style="display:none;">
+    <button id="menuBtn" class="menu-btn">☰</button>
 
 <nav class="side-menu" id="sideMenu">
+
   <div class="menu-title">
     Économat<br>
     <span>Cercle de l'Union</span>
   </div>
 
   <div id="tabs"></div>
+
+  <div class="side-footer">
+
+    <button class="sidebar-logout" onclick="logoutUser()">
+
+      <span class="logout-icon">⇥</span>
+
+      <span>Déconnexion</span>
+
+    </button>
+
+  </div>
+
 </nav>
 
 <div id="menuOverlay"></div>
@@ -810,7 +1857,7 @@ color:var(--blue);
 </div>
 
   </div>
-
+<div class="grid dashboard" id="homeMetrics"></div>
 </div>
 
   </div>
@@ -845,46 +1892,77 @@ color:var(--blue);
         </div>
       </section>
       <section id="myday" class="section active">
-        <div class="grid two">
           <div class="panel">
             <h2>Ma journée</h2>
             <div id="myAttendance"></div>
           </div>
-          <div class="panel">
-            <h2>Mon emploi du temps</h2>
-            <div id="mySchedule"></div>
-          </div>
-        </div>
+        
         <div class="panel" style="margin-top: 14px">
           <h2>Mes tâches du jour</h2>
           <div id="myTasks" class="list"></div>
         </div>
       </section>
+      <section id="schedule" class="section">
+
+    <div class="panel">
+
+        <div class="toolbar">
+
+            <h2 id="employeeScheduleTitle">
+                Emploi du temps
+            </h2>
+
+        </div>
+
+        <div id="employeeScheduleTable"></div>
+
+    </div>
+
+</section>
       <section id="weekly" class="section">
         <div class="panel">
-          <div class="toolbar">
-            <h2>Programme hebdomadaire</h2>
-            <div class="row">
-              <button class="secondary" onclick="shiftWeek(-7)">
-                Semaine précédente</button
-              ><input
-                id="weekPicker"
-                type="date"
-                onchange="setWeekFromInput(this.value)"
-              /><button class="secondary" onclick="shiftWeek(7)">
-                Semaine suivante</button
-              ><button onclick="openTaskModal(null, selectedWeekStart)">
-                + Programmer une tâche</button
-              ><button class="secondary" onclick="duplicateWeek()">
-                Dupliquer la semaine
-              </button>
-            </div>
-          </div>
-          <div class="notice" style="margin-bottom: 12px">
-            Prépare le programme le dimanche, jour par jour, pour chaque membre.
-            Chaque tâche est liée à une date précise.
-          </div>
-          <div id="weekBoard" class="week-grid"></div>
+        <div class="toolbar">
+
+  <h2 id="weeklyTitle">
+    Mes tâches de la semaine
+  </h2>
+
+
+  <div class="row">
+
+    <button class="secondary" onclick="shiftWeek(-7)">
+      Semaine précédente
+    </button>
+
+
+    <input
+      id="weekPicker"
+      type="date"
+      onchange="setWeekFromInput(this.value)"
+    />
+
+
+    <button class="secondary" onclick="shiftWeek(7)">
+      Semaine suivante
+    </button>
+
+
+    <span id="weeklyAdminActions"></span>
+
+  </div>
+
+</div>
+
+
+<div 
+id="weeklyNotice"
+class="notice"
+style="margin-bottom:12px">
+</div>
+
+
+<div id="weekBoard" class="week-grid"></div>  
+          
         </div>
       </section>
       <section id="members" class="section">
@@ -1071,7 +2149,7 @@ const currentDayName = () => {
       if (savedUser) {
         state.loggedUser = JSON.parse(savedUser);
       }
-      let active = "myday";
+      let active = "home";
       let editingMember = null,
         editingTask = null;
       let selectedWeekStart = mondayOf(today());
@@ -1296,6 +2374,7 @@ const currentDayName = () => {
           role: m.Role === "Administrateur" ? "admin" : "employee",
           phone: m.Telephone || "",
           active: m.Actif,
+          profilePhoto: m.profile_photo || "",
         }));
 
         console.log("Membres chargés depuis Supabase :", state.members);
@@ -1377,26 +2456,38 @@ const currentDayName = () => {
               ((m?.name || "?").trim()[0] || "?") +
               "</span>";
       }
-      function photosHtml(task) {
-        return (task.photo_urls || []).length
-          ? '<div class="photos">' +
-              task.photo_urls
-                .map(
-                  (url, i) =>
-                    '<a href="' +
-                    url +
-                    '" target="_blank">' +
-                    '<img class="task-photo" src="' +
-                    url +
-                    '" alt="Photo tâche ' +
-                    (i + 1) +
-                    '">' +
-                    "</a>",
-                )
-                .join("") +
-              "</div>"
-          : "";
-      }
+      function photosHtml(task){
+
+    if(
+        !task.photo_urls ||
+        task.photo_urls.length===0
+    ) return "";
+
+    return `
+        <div class="task-photos">
+
+            ${task.photo_urls.map(url=>`
+
+                <img
+                    src="${url}"
+                    class="task-photo"
+                >
+
+            `).join("")}
+
+        </div>
+    `;
+
+}
+function toggleAdminAlerts(){
+
+    const center = document.querySelector(".admin-alert-center");
+
+    if(!center) return;
+
+    center.classList.toggle("open");
+
+}
       function readFiles(input) {
         return Promise.all(
           [...((input && input.files) || [])].map(
@@ -1455,6 +2546,283 @@ const currentDayName = () => {
         });
         save();
       }
+      function generateTaskSummary(){
+
+    const todayTasks = state.tasks.filter(t => t.date === today());
+
+    const summary = {
+
+        total: todayTasks.length,
+
+        completed: 0,
+
+        pending: 0,
+
+        late: 0
+
+    };
+
+    todayTasks.forEach(task=>{
+
+        if(task.status === "réalisée"){
+
+            summary.completed++;
+
+        }
+
+        else if(task.status === "en retard"){
+
+            summary.late++;
+
+        }
+
+        else{
+
+            summary.pending++;
+
+        }
+
+    });
+
+    return summary;
+
+}
+function generateDashboardSummary(){
+
+    const presence = generatePresenceSummary();
+
+    const tasks = generateTaskSummary();
+
+    const alerts = generateAlerts();
+
+    return{
+
+        presence,
+
+        tasks,
+
+        alerts,
+
+        totalAlerts: alerts.filter(
+    a => a.level !== "success"
+).length
+
+    };
+
+}
+function renderPerformanceCard(){
+
+    const summary = generateDashboardSummary();
+
+    const presenceRate = summary.presence.total
+        ? Math.round((summary.presence.present / summary.presence.total) * 100)
+        : 0;
+
+
+    const punctualityRate = summary.presence.present
+        ? Math.round(((summary.presence.present - summary.presence.late) / summary.presence.present) * 100)
+        : 0;
+
+
+    const taskRate = summary.tasks.total
+        ? Math.round((summary.tasks.completed / summary.tasks.total) * 100)
+        : 0;
+
+
+    return `
+
+<div class="performance-card">
+
+    <h3>📊 Performance équipe</h3>
+
+
+    <div class="performance-circle-container">
+
+
+        <div class="performance-circle">
+            <strong>${presenceRate}%</strong>
+            <span>Présence</span>
+        </div>
+
+
+        <div class="performance-circle">
+            <strong>${punctualityRate}%</strong>
+            <span>Ponctualité</span>
+        </div>
+
+
+        <div class="performance-circle">
+            <strong>${taskRate}%</strong>
+            <span>Tâches réalisées</span>
+        </div>
+
+
+    </div>
+
+</div>
+
+`;
+
+}
+  function generatePerformanceSummary(){
+
+    const presence = generatePresenceSummary();
+    const tasks = generateTaskSummary();
+
+    const presenceRate = presence.total
+        ? Math.round((presence.present / presence.total) * 100)
+        : 0;
+
+
+    const punctualityRate = presence.present
+        ? Math.round(
+            ((presence.present - presence.late) / presence.present) * 100
+        )
+        : 0;
+
+
+    const taskRate = tasks.total
+        ? Math.round(
+            (tasks.completed / tasks.total) * 100
+        )
+        : 0;
+
+
+    return {
+
+        presenceRate,
+
+        punctualityRate,
+
+        taskRate
+
+    };
+
+}    
+function generateAlerts() {
+
+    const alerts = [];
+
+    const todayAttendance = state.attendance[today()] || {};
+
+    const todayName = new Date().toLocaleDateString("fr-FR", {
+        weekday: "long"
+    }).toLowerCase();
+
+
+ // ==============================
+// PRESENCES / RETARDS
+// ==============================
+
+
+const presenceSummary = generatePresenceSummary();
+
+
+presenceSummary.alerts.forEach(alert => {
+
+
+    alerts.push({
+
+        type: alert.type,
+
+        level:
+            alert.type === "retard"
+            ? "warning"
+            : "critical",
+
+        member: alert.member,
+
+        message: alert.message
+
+    });
+
+
+});   
+
+
+   // ==============================
+// ALERTES TÂCHES
+// ==============================
+
+state.tasks
+.forEach(t => {
+
+
+    // Tâche terminée → aucune alerte
+    if(t.status === "réalisée"){
+        return;
+    }
+
+
+    // Priorité urgente
+    if(
+        t.priority === "urgente"
+    ){
+
+        alerts.push({
+
+            type:"urgent-task",
+
+            level:"critical",
+
+            member:userName(t.memberId),
+
+            message:
+            "Tâche urgente non réalisée : " 
+            + t.name
+
+        });
+
+        return;
+    }
+
+
+    // Retard simple
+    if(
+        t.status === "en retard"
+    ){
+
+        alerts.push({
+
+            type:"task",
+
+            level:"warning",
+
+            member:userName(t.memberId),
+
+            message:
+            "Tâche en retard : "
+            + t.name
+
+        });
+
+    }
+
+
+}); 
+
+
+    return alerts;
+}      
+function groupAlerts(alerts){
+
+    return{
+
+        absences: alerts.filter(a=>a.type==="absence"),
+
+        tasks: alerts.filter(
+    a =>
+    a.type === "task" ||
+    a.type === "urgent-task"
+),
+
+        photos: alerts.filter(a=>a.type==="photo"),
+
+        late: alerts.filter(a=>a.type==="retard")
+
+    };
+
+}
       function render() {
 
   const loggedUser = sessionStorage.getItem("loggedUser");
@@ -1490,48 +2858,524 @@ if (appMain) appMain.style.display = "block";
 }
         renderDashboard();
         renderMyDay();
+        renderEmployeeSchedule();
         renderMembers();
         renderSchedules();
-        renderWeekly();
+        if(currentUserIsAdmin()){
+
+    renderWeekly();
+
+}else{
+
+    renderEmployeeWeeklyTasks();
+
+}
         renderTasks();
         renderHistory();
         renderReports();
       }
+      function renderAlertCenter() {
+
+    const alerts = generateAlerts();
+const groups = groupAlerts(alerts);
+    if (alerts.length === 0) {
+
+        return `
+        <div class="alert-center success">
+
+            <h3>✅ Centre d'alertes</h3>
+
+            <p>Aucune alerte aujourd'hui.</p>
+
+        </div>
+        `;
+
+    }
+
+    return `
+
+    <details class="alert-center">
+
+<summary>
+
+<div class="alert-title">
+
+    <div>
+        <h3>🚨 Centre d'alertes</h3>
+        <p>${alerts.length} problème(s) nécessitent votre attention</p>
+    </div>
+
+    <span class="alert-toggle">
+        ▼
+    </span>
+
+</div>
+
+</summary>
+
+<div class="alert-content">
+
+       ${groups.absences.length ? `
+
+<div class="alert-group">
+
+<h4>🔴 Absences (${groups.absences.length})</h4>
+
+${groups.absences.map(a => `
+
+<div class="alert-item critical">
+
+<strong>${a.member}</strong>
+
+<span>${a.message}</span>
+
+</div>
+
+`).join("")}
+
+</div>
+
+` : ""}
+
+
+${groups.tasks.length ? `
+
+<div class="alert-group">
+
+<h4>🟠 Tâches en retard (${groups.tasks.length})</h4>
+
+${groups.tasks.map(a => `
+
+<div class="alert-item warning">
+
+<strong>${a.member}</strong>
+
+<span>${a.message}</span>
+
+</div>
+
+`).join("")}
+
+</div>
+
+` : ""}
+
+    </div>
+</details>
+    `;
+
+}
+function renderAdminAlerts() {
+
+    const grouped = groupAlerts(generateAlerts());
+
+    const total =
+        grouped.absences.length +
+        grouped.late.length +
+        grouped.tasks.length +
+        grouped.photos.length;
+
+
+    function renderAlertItem(alert) {
+
+        let icon = "⚠️";
+        let badge = "Attention";
+        let badgeClass = "b-amber";
+
+
+        if(alert.level === "critical"){
+            icon = "🚨";
+            badge = "Urgent";
+            badgeClass = "b-red";
+        }
+
+
+        if(alert.type === "retard"){
+            icon = "⏰";
+            badge = "Retard";
+            badgeClass = "b-amber";
+        }
+
+
+        return `
+
+      <div class="alert-item">
+
+
+    <div class="alert-main">
+
+
+        <div class="alert-name">
+
+            ${icon} ${alert.member}
+
+        </div>
+
+
+        <p>
+            ${alert.message}
+        </p>
+
+
+        <span class="badge ${badgeClass}">
+            ${badge}
+        </span>
+
+
+    </div>
+
+
+</div>  
+
+        `;
+
+    }
+
+
+
+    function renderSection(title, icon, alerts){
+
+        if(!alerts.length){
+            return "";
+        }
+
+
+        return `
+
+        <div class="alert-section">
+
+
+            <div class="alert-section-title">
+
+                <h3>
+                    ${icon} ${title}
+                </h3>
+
+                <span class="badge b-red">
+                    ${alerts.length}
+                </span>
+
+            </div>
+
+
+            <div class="alert-section-list">
+
+                ${
+                    alerts
+                    .map(renderAlertItem)
+                    .join("")
+                }
+
+            </div>
+
+
+        </div>
+
+        `;
+
+    }
+
+
+
+    return `
+
+
+<div class="admin-alert-center">
+
+
+    <div class="alert-toggle" onclick="toggleAdminAlerts()">
+
+
+        <div>
+
+            <h2>
+                🚨 Centre d'alertes
+            </h2>
+
+
+            <p>
+                ${total} éléments nécessitent votre intervention.
+            </p>
+
+        </div>
+
+
+        <div class="alert-toggle-right">
+
+            <div class="alert-total">
+                ${total}
+            </div>
+
+            <span class="alert-arrow">
+                ▼
+            </span>
+
+        </div>
+
+
+    </div>
+
+
+    <div class="alert-body">
+
+
+
+    ${renderSection(
+        "Présences",
+        "👥",
+        grouped.absences
+    )}
+
+
+
+    ${renderSection(
+        "Retards",
+        "⏰",
+        grouped.late
+    )}
+
+
+
+    ${renderSection(
+        "Tâches",
+        "📋",
+        grouped.tasks
+    )}
+
+
+
+    ${renderSection(
+        "Photos",
+        "📷",
+        grouped.photos
+    )}
+
+
+
+</div>
+
+</div>
+
+`;
+
+}
+function generateEmployeeSummary(){
+
+    const tasks = state.tasks.filter(
+        t => String(t.memberId) === String(state.currentUser)
+    );
+
+    return{
+
+        total: tasks.length,
+
+        completed: tasks.filter(t=>t.status==="réalisée").length,
+
+        late: tasks.filter(t=>t.status==="en retard").length,
+
+        remaining: tasks.filter(
+            t=>t.status!=="réalisée"
+        ).length
+
+    };
+
+}
+function renderEmployeeHome(){
+
+    const user = member(state.currentUser);
+
+    if(!user) return;
+
+    const summary = generateEmployeeSummary();
+    const todayTasks = state.tasks.filter(
+    t =>
+    String(t.memberId) === String(state.currentUser)
+    &&
+    t.date === today()
+);
+const mySchedule = state.schedules[state.currentUser] || [];
+const todaySchedule = mySchedule.find(
+    s => s.day === new Date().toLocaleDateString("fr-FR", {
+        weekday: "long"
+    }).replace(/^./, c => c.toUpperCase())
+);
+    document.getElementById("homeContent").innerHTML = `
+
+
+    <div class="welcome-card">
+
+    <img
+        src="assets/images/logo.png"
+        class="welcome-logo"
+        alt="Cercle de l'Union"
+    >
+
+    <h2>
+        Bonjour ${user.name} 👋
+    </h2>
+
+    <p>
+        Bienvenue dans votre espace employé.
+    </p>
+
+</div>
+
+
+    <div class="profile-card">
+
+
+        <div class="profile-photo">
+
+            ${avatarHtml(user)}
+
+        </div>
+
+
+        <div class="profile-info">
+
+            <h2>${user.name}</h2>
+
+            <p>${user.post}</p>
+
+            <span>Économat - Cercle de l'Union</span>
+
+        </div>
+
+
+    </div>
+<div class="employee-summary">
+
+    <h3>📋 Résumé du jour</h3>
+
+    <div class="summary-grid">
+
+        <div class="summary-card">
+            <strong>${summary.total}</strong>
+            <span>Tâches prévues</span>
+        </div>
+
+        <div class="summary-card">
+            <strong>${summary.completed}</strong>
+            <span>Terminées</span>
+        </div>
+
+        <div class="summary-card">
+            <strong>${summary.remaining}</strong>
+            <span>Restantes</span>
+        </div>
+
+    </div>
+
+</div>
+<div class="employee-schedule">
+
+    <h3>⏰ Mon horaire</h3>
+
+    ${
+    todaySchedule && todaySchedule.work
+    ?
+    `
+    <p>
+        Aujourd'hui :
+        <strong>${todaySchedule.start} - ${todaySchedule.end}</strong>
+    </p>
+
+    ${
+    todaySchedule.break
+    ?
+    `<small>Pause : ${todaySchedule.break}</small>`
+    :
+    ""
+    }
+
+    `
+    :
+    `
+    <p>Repos aujourd'hui</p>
+    `
+    }
+
+</div>
+<div class="employee-tasks">
+
+<h3>Mes tâches aujourd'hui</h3>
+
+${
+todayTasks.length
+?
+todayTasks.map(t => `
+
+<div class="employee-task-card">
+
+    <div class="task-name">
+        ${t.name}
+    </div>
+
+    <div class="task-status ${t.status}">
+        ${t.status}
+    </div>
+
+</div>
+
+`).join("")
+:
+`
+<div class="empty-state">
+Aucune tâche prévue aujourd'hui.
+</div>
+`
+}
+
+</div>
+    `;
+
+}
       function renderAdminHome() {
 
     const user = member(state.currentUser);
 
     if (!user) return;
+    const summary = generateDashboardSummary();
+  document.getElementById("homeContent").innerHTML = `
 
-    document.getElementById("homeContent").innerHTML = `
+<div class="welcome-card">
 
-        <div class="welcome-card">
+    <img
+        src="assets/images/logo.png"
+        class="welcome-logo"
+        alt="Cercle de l'Union"
+    >
 
-            <h2>Bonjour ${user.name} 👋</h2>
+    <h2>
+        Bonjour ${user.name} 👋
+    </h2>
 
-            <p>Bienvenue dans votre espace administrateur.</p>
+    <p>
+        Bienvenue dans votre espace administrateur.
+    </p>
 
-        </div>
+</div>
 
-        <div class="profile-card">
+<div class="profile-card">
 
-            <div class="profile-photo">
+    <div class="profile-photo">
 
-                ${user.name.charAt(0)}
+        ${avatarHtml(user)}
 
-            </div>
+    </div>
 
-            <div class="profile-info">
+    <div class="profile-info">
 
-                <h2>${user.name}</h2>
+        <h2>${user.name}</h2>
 
-                <p>${user.post}</p>
+        <p>${user.post}</p>
 
-                <span>Administration - Cercle de l'Union</span>
+        <span>Administration - Cercle de l'Union</span>
 
-            </div>
+    </div>
 
-        </div>
+</div>
+
 <div class="admin-cards">
 
     <div class="admin-card">
@@ -1540,10 +3384,9 @@ if (appMain) appMain.style.display = "block";
 
         <h3>Présents</h3>
 
-        <strong id="presentCount">0</strong>
+        <strong id="presentCount">0 / 0</strong>
 
     </div>
-
 
     <div class="admin-card">
 
@@ -1555,7 +3398,6 @@ if (appMain) appMain.style.display = "block";
 
     </div>
 
-
     <div class="admin-card">
 
         <div class="admin-icon">📋</div>
@@ -1565,7 +3407,6 @@ if (appMain) appMain.style.display = "block";
         <strong id="lateTaskCount">0</strong>
 
     </div>
-
 
     <div class="admin-card">
 
@@ -1577,7 +3418,33 @@ if (appMain) appMain.style.display = "block";
 
     </div>
 
-`;
+</div>
+<div class="admin-performance-wrapper">
+
+    ${renderPerformanceCard()}
+
+</div>
+<div class="admin-alert-wrapper">
+
+    ${renderAdminAlerts()}
+
+</div>
+
+`;  
+
+console.log("SUMMARY ADMIN HOME =", summary);
+
+document.getElementById("presentCount").textContent =
+    summary.presence.present + " / " + summary.presence.total;
+
+document.getElementById("lateCount").textContent =
+    summary.presence.late;
+
+document.getElementById("lateTaskCount").textContent =
+    summary.tasks.late;
+
+document.getElementById("alertCount").textContent =
+    summary.totalAlerts;
 
 }
       function renderUserSelect() {
@@ -1621,6 +3488,21 @@ if (appMain) appMain.style.display = "block";
 
         return true;
       }
+ function logoutUser(){
+
+    sessionStorage.removeItem("loggedUser");
+
+    state.currentUser = null;
+
+    active = "home";
+
+    closeMenu();
+
+    render();
+
+}
+      
+
 
       function renderTabs() {
         const tabs = currentUserIsAdmin()
@@ -1638,7 +3520,8 @@ if (appMain) appMain.style.display = "block";
           : [
   ["home", "⌂ Accueil"],
   ["myday", "Ma journée"],
-  ["weekly", "Ma semaine"],
+  ["schedule", "Emploi du temps"],
+  ["weekly", "Mes tâches de la semaine"],
 ];
         if (
  !currentUserIsAdmin() &&
@@ -1678,125 +3561,329 @@ if (appMain) appMain.style.display = "block";
             : "b-blue";
       }
       function taskCard(x) {
-        const admin = currentUserIsAdmin();
-        const m = member(x.memberId);
-        return (
-          '<div class="item priority-' +
-          x.priority +
-          '"><div class="item-head"><div class="member-line">' +
-          avatarHtml(m, true) +
-          '<div><div class="title">' +
-          x.name +
-          '</div><div class="meta">' +
-          x.date +
-          " · " +
-          userName(x.memberId) +
-          " · " +
-          x.post +
-          " · prévue " +
-          x.due +
-          '</div></div></div><span class="badge ' +
-          badge(x.status) +
-          '">' +
-          x.status +
-          '</span></div><div class="meta">' +
-          x.desc +
-          "</div>" +
-          photosHtml(x) +
-          (admin
-  ? '<div class="actions"><button class="good" onclick="validateTask(\'' +
-    x.id +
-    "')\" " +
-    (x.status === "réalisée" ? "disabled" : "") +
-    '>Valider</button><button class="secondary" onclick="addTaskPhotos(\'' +
-    x.id +
-    "')\">Ajouter photo</button>"
-  : '<div class="actions">') +
-          (admin
-            ? '<button class="secondary" onclick="openTaskModal(\'' +
-              x.id +
-              '\')">Modifier</button><button class="secondary" onclick="duplicateTask(\'' +
-              x.id +
-              "')\">Dupliquer</button>"
-            : "") +
-          "</div></div>"
-        );
-      }
+
+    const admin = currentUserIsAdmin();
+
+    const owner =
+        String(x.memberId) === String(state.currentUser);
+
+    const m = member(x.memberId);
+
+    return (
+
+        '<div class="item priority-' +
+x.priority +
+(x.status==="réalisée" ? " task-done" : "") +
+'">' +
+
+        '<div class="item-head">' +
+
+            '<div class="member-line">' +
+
+                avatarHtml(m, true) +
+
+                '<div>' +
+
+                    '<div class="title">' +
+                    x.name +
+                    '</div>' +
+
+                    '<div class="meta">' +
+                    x.date +
+                    " · prévue " +
+                    x.due +
+                    '</div>' +
+
+                '</div>' +
+
+            '</div>' +
+
+            '<span class="badge ' +
+            badge(x.status) +
+            '">' +
+            x.status +
+            '</span>' +
+
+        '</div>' +
+
+        '<div class="meta">' +
+        x.desc +
+        '</div>' +
+
+        (
+
+            admin
+
+            ?
+
+            '<div class="actions">' +
+
+                '<button class="good" onclick="validateTask(\'' +
+                x.id +
+                '\')" ' +
+                (x.status === "réalisée" ? "disabled" : "") +
+                '>Valider</button>' +
+
+                '<button class="secondary" onclick="addTaskPhotos(\'' +
+                x.id +
+                '\')">' +
+                'Ajouter photo</button>' +
+
+                '<button class="secondary" onclick="openTaskModal(\'' +
+                x.id +
+                '\')">' +
+                'Modifier</button>' +
+
+                '<button class="secondary" onclick="duplicateTask(\'' +
+                x.id +
+                '\')">' +
+                'Dupliquer</button>' +
+
+            '</div>'
+
+
+            :
+
+
+            owner
+
+            ?
+
+            '<div class="actions">' +
+
+                '<button class="good" onclick="validateTask(\'' +
+                x.id +
+                '\')" ' +
+                (x.status === "réalisée" ? "disabled" : "") +
+                '>Terminer</button>' +
+
+            '</div>'
+
+
+            :
+
+            ''
+
+        ) +
+
+        '</div>'
+
+    );
+
+}
       function renderDashboard() {
+        console.log("TEST PRESENCE :", generatePresenceSummary());
         adminNotice.innerHTML = currentUserIsAdmin()
   ? '<div class="admin-lock" style="margin-bottom:12px">Accès administrateur.</div>'
   : '';
-        const allToday = state.tasks.filter((x) => x.date === today());
-        const tasks = currentUserIsAdmin()
-          ? allToday
-          : allToday.filter((x) => x.memberId === state.currentUser);
-        const done = tasks.filter((x) => x.status === "réalisée").length;
-        const late = tasks.filter((x) => x.status === "en retard").length;
-        document.getElementById("metrics").innerHTML =
-          metric("Tâches du jour", tasks.length, "var(--blue)") +
-          metric("Réalisées", done, "var(--green)") +
-          metric("Restantes", tasks.length - done, "var(--amber)") +
-          metric("Retards", late, "var(--red)");
+    const allToday = state.tasks.filter(
+    x => x.date === today()
+);
+
+const tasks = currentUserIsAdmin()
+    ? allToday
+    : allToday.filter(
+        x => x.memberId === state.currentUser
+    );
+
+const attendanceToday =
+    state.attendance[today()] || {};
+
+const presents =
+    Object.values(attendanceToday)
+        .filter(a => a.arrival)
+        .length;
+
+const lateEmployees =
+    Object.entries(attendanceToday)
+        .filter(([id,a])=>{
+
+            if(!a.arrival) return false;
+
+            const planning =
+                state.schedules[id];
+
+            if(!planning) return false;
+
+            const todayIndex =
+                (new Date().getDay()+6)%7;
+
+            const sched =
+                planning[todayIndex];
+
+            if(!sched || !sched.work) return false;
+
+            return a.arrival > sched.start;
+
+        }).length;
+
+const overdue =
+    state.tasks.filter(
+        t => t.status==="en retard"
+    ).length;
+
+const alertCount =
+    overdue +
+
+    state.members.filter(m=>{
+
+        if(!m.active) return false;
+
+        return !attendanceToday[m.id]?.arrival;
+
+    }).length;
+
+const dashboard = generateDashboardSummary();
+
+document.getElementById("metrics").innerHTML =
+
+    metric(
+        "👥 Présents",
+        dashboard.presence.present,
+        "var(--green)"
+    )
+
+    +
+
+    metric(
+        "⏰ Retards",
+        dashboard.presence.late,
+        "var(--amber)"
+    )
+
+    +
+
+    metric(
+        "📋 Tâches en retard",
+        dashboard.tasks.late,
+        "var(--red)"
+    )
+
+    +
+
+    metric(
+        "🚨 Alertes",
+        dashboard.totalAlerts,
+        "var(--blue)"
+    );   
         todayTasks.innerHTML = tasks.length
           ? tasks.map(taskCard).join("")
           : '<div class="empty">Aucune tâche pour aujourd’hui.</div>';
-        presenceList.innerHTML = state.members
-          .filter((m) => m.active)
-          .map((m) => {
-            const a = (state.attendance[today()] || {})[m.id] || {};
-            const b =
-              a.arrival && !a.departure
-                ? "b-green"
-                : a.departure
-                  ? "b-gray"
-                  : "b-red";
-            const txt = a.arrival
-              ? a.departure
-                ? "Parti " + a.departure
-                : "Présent depuis " + a.arrival
-              : "Absent";
-            return (
-              '<div class="item"><div class="item-head"><div class="member-line">' +
-              avatarHtml(m, true) +
-              '<div><div class="title">' +
-              m.name +
-              '</div><div class="meta">' +
-              m.post +
-              '</div></div></div><span class="badge ' +
-              b +
-              '">' +
-              txt +
-              "</span></div></div>"
-            );
-          })
-          .join("");
-        const alerts = tasks
-          .filter(
-            (x) =>
-              x.status === "en retard" ||
-              x.priority === "urgente" ||
-              x.priority === "importante",
-          )
-          .slice(0, 8);
-        alertsEl = alerts.length
-          ? alerts
-              .map(
-                (x) =>
-                  '<div class="item priority-' +
-                  x.priority +
-                  '"><div class="title">' +
-                  x.name +
-                  '</div><div class="meta">' +
-                  userName(x.memberId) +
-                  " · " +
-                  x.due +
-                  " · " +
-                  x.status +
-                  "</div></div>",
-              )
-              .join("")
-          : '<div class="empty">Aucune alerte active.</div>';
-        document.getElementById("alerts").innerHTML = alertsEl;
+
+const presentMembers = state.members
+    .filter(m => m.active && attendanceToday[m.id]?.arrival)
+    .sort((a,b)=>
+        attendanceToday[a.id].arrival.localeCompare(
+            attendanceToday[b.id].arrival
+        )
+    );
+
+presenceList.innerHTML =
+
+presentMembers.length
+
+? presentMembers.map(m=>`
+
+<div class="item">
+
+    <div class="item-head">
+
+        <div class="member-line">
+
+            ${avatarHtml(m,true)}
+
+            <div>
+
+                <div class="title">
+                    ${m.name}
+                </div>
+
+                <div class="meta">
+                    ${m.post}
+                </div>
+
+            </div>
+
+        </div>
+
+        <span class="badge b-green">
+
+            ${attendanceToday[m.id].arrival}
+
+        </span>
+
+    </div>
+
+</div>
+
+`).join("")
+
+: '<div class="empty">Aucun membre présent.</div>';    
+      const alerts = [];
+
+// Employés absents
+state.members
+.filter(m => m.active)
+.forEach(m => {
+
+    if (!attendanceToday[m.id]?.arrival) {
+
+        alerts.push({
+            priority: "urgente",
+            title: m.name,
+            text: "N'a pas encore pointé"
+        });
+
+    }
+
+});
+
+// Tâches en retard
+state.tasks
+.filter(t => t.status === "en retard")
+.forEach(t => {
+
+    alerts.push({
+        priority: "importante",
+        title: t.name,
+        text: userName(t.memberId)
+    });
+
+});
+
+// Tâches urgentes non réalisées
+state.tasks
+.filter(t =>
+    t.priority === "urgente" &&
+    t.status !== "réalisée"
+)
+.forEach(t => {
+
+    alerts.push({
+        priority: "urgente",
+        title: t.name,
+        text: userName(t.memberId)
+    });
+
+});
+
+document.getElementById("alerts").innerHTML =
+
+alerts.length
+
+? alerts.slice(0,10).map(a =>
+
+`<div class="item priority-${a.priority}">
+
+    <div class="title">${a.title}</div>
+
+    <div class="meta">${a.text}</div>
+
+</div>`
+
+).join("")
+
+: '<div class="empty">Aucune alerte.</div>';  
       }
    function renderMyDay() {
 
@@ -1847,102 +3934,311 @@ if (appMain) appMain.style.display = "block";
           (a.departure || "non pointé") +
           "</p></div>";
         const todayIndex = (new Date().getDay() + 6) % 7;
-        const s = (state.schedules[state.currentUser] || makeSchedule())[
-          todayIndex
-        ];
-        mySchedule.innerHTML = s.work
-          ? '<div class="item"><div class="title">' +
-            s.day +
-            " : " +
-            s.start +
-            " - " +
-            s.end +
-            '</div><div class="meta">Pause : ' +
-            (s.break || "non renseignée") +
-            '</div><div class="meta">' +
-            (s.note || "") +
-            "</div></div>"
-          : '<div class="empty">Repos prévu aujourd’hui.</div>';
+
         const list = state.tasks.filter(
-          (x) => x.date === today() && x.memberId === state.currentUser,
+          (x) => x.date === today() && 
+          x.memberId === state.currentUser,
         );
         myTasks.innerHTML = list.length
           ? list.map(taskCard).join("")
           : '<div class="empty">Aucune tâche affectée aujourd’hui.</div>';
       }
- function generatePresenceSummary() {
+      function calculateLate(memberId){
 
-    const today = new Date().toISOString().slice(0,10);
+    const planning = state.schedules[memberId];
 
-    const todayName = new Date().toLocaleDateString("fr-FR", {
-        weekday: "long"
-    });
+    if(!planning) return null;
 
-    const result = {
 
-        total:0,
+    const todayName = new Date()
+        .toLocaleDateString("fr-FR", {
+            weekday:"long"
+        });
 
-        present:0,
 
-        absent:0,
+    const todaySchedule = planning.find(
+        p => p.day.toLowerCase() === todayName
+    );
 
-        late:0,
 
-        alerts:[]
+    // Repos ou pas de planning
+    if(!todaySchedule || !todaySchedule.work){
+
+        return null;
+
+    }
+
+
+    const attendance =
+        state.attendance[today()]?.[memberId];
+
+
+    // Pas encore pointé
+if(!attendance || !attendance.arrival){
+
+    const now = nowTime();
+
+    const [nh,nm] = now.split(":").map(Number);
+
+    const currentMinutes = nh * 60 + nm;
+
+
+    const [sh,sm] = todaySchedule.start
+        .split(":")
+        .map(Number);
+
+    const expectedMinutes = sh * 60 + sm;
+
+
+    // Avant l'heure prévue + tolérance
+    if(currentMinutes <= expectedMinutes + 10){
+
+        return {
+
+            late:false,
+
+            missing:false,
+
+            waiting:true,
+
+            expected:todaySchedule.start
+
+        };
+
+    }
+
+
+    return {
+
+        late:false,
+
+        missing:true,
+
+        expected:todaySchedule.start
 
     };
 
+}
 
-    state.members.forEach(member=>{
 
-        if(!member.active) return;
+    const [h,m] =
+        todaySchedule.start.split(":")
+        .map(Number);
 
-        const planning = state.schedules[member.id];
 
-        if(!planning) return;
+    const expected =
+        h * 60 + m + 10; // tolérance 10 minutes
 
-        const todaySchedule = planning.find(p=>p.day.toLowerCase()===todayName);
 
-        if(!todaySchedule) return;
+    const [ah,am] =
+        attendance.arrival.split(":")
+        .map(Number);
 
-        if(!todaySchedule.work) return;
 
-        result.total++;
+    const arrived =
+        ah * 60 + am;
 
-        const attendanceToday =
-            state.attendance[today]?.[member.id];
 
-        if(attendanceToday){
+    if(arrived > expected){
 
-            result.present++;
+        return {
 
-        }else{
+            late:true,
 
-            result.absent++;
+            minutes: arrived - (h*60+m),
 
-            result.alerts.push({
+            expected:todaySchedule.start,
 
-                type:"absence",
+            arrival:attendance.arrival
 
-                member:member.name
+        };
 
-            });
+    }
 
-        }
+
+    return {
+
+        late:false,
+
+        minutes:0,
+
+        expected:todaySchedule.start,
+
+        arrival:attendance.arrival
+
+    };
+
+}
+ function generatePresenceSummary() {
+
+    const summary = {
+        total: 0,
+        present: 0,
+        absent: 0,
+        late: 0,
+        alerts: []
+    };
+
+    const attendanceToday = state.attendance[today()] || {};
+
+    const todayName = new Date().toLocaleDateString("fr-FR", {
+        weekday: "long"
+    }).toLowerCase();
+
+    state.members
+        .filter(m => m.active)
+        .forEach(m => {
+
+            const planning = state.schedules[m.id];
+
+            // Pas de planning trouvé
+            if (!planning) return;
+
+            const todaySchedule = planning.find(
+                p => p.day.toLowerCase() === todayName
+            );
+
+            // Pas de journée renseignée
+            if (!todaySchedule) return;
+
+            // Repos → on ne compte pas cette personne
+            if (!todaySchedule.work) return;
+
+            // Cette personne doit travailler aujourd'hui
+            summary.total++;
+
+            const lateInfo = calculateLate(m.id);
+
+
+// Pas encore l'heure de prise de poste
+if (lateInfo.waiting) {
+
+    return;
+
+}
+
+
+// Retard constaté
+if (lateInfo.late) {
+
+    summary.present++;
+
+    summary.late++;
+
+    summary.alerts.push({
+
+        type:"retard",
+
+        member:m.name,
+
+        message:
+        "Retard de " +
+        lateInfo.minutes +
+        " min (prévu " +
+        lateInfo.expected +
+        ", arrivé " +
+        lateInfo.arrival +
+        ")"
 
     });
 
-    return result;
+    return;
 
-}     
+}
+
+
+// Pas de pointage alors qu'il devait être présent
+if (lateInfo.missing) {
+
+    summary.absent++;
+
+    summary.alerts.push({
+
+        type:"absence",
+
+        member:m.name,
+
+        message:
+        "N'a pas encore pointé (prévu " +
+        lateInfo.expected +
+        ")"
+
+    });
+
+    return;
+
+}
+
+
+// Présent à l'heure
+summary.present++;
+
+        });
+
+    return summary;
+}  
       function renderHome() {
 
-  const user = member(state.currentUser);
+    console.log("RENDER HOME LANCE");
 
-  if (!user) return;
+    const user = member(state.currentUser);
 
-  document.getElementById("homeName").textContent = user.name;
-  document.getElementById("homePost").textContent = user.post;
+    if (!user) return;
+
+
+    const homeName = document.getElementById("homeName");
+    const homePost = document.getElementById("homePost");
+    const homeMetrics = document.getElementById("homeMetrics");
+
+
+    if (homeName) {
+        homeName.textContent = user.name;
+    }
+
+    if (homePost) {
+        homePost.textContent = user.post;
+    }
+
+
+    if (homeMetrics) {
+
+        const summary = generateDashboardSummary();
+
+        console.log("SUMMARY HOME =", summary);
+
+
+        homeMetrics.innerHTML =
+            metric(
+                "👥 Présents",
+                summary.presence.present,
+                "var(--green)"
+            )
+
+            +
+
+            metric(
+                "⏰ Retards",
+                summary.presence.late,
+                "var(--amber)"
+            )
+
+            +
+
+            metric(
+                "📋 Tâches en retard",
+                summary.tasks.late,
+                "var(--red)"
+            )
+
+            +
+
+            metric(
+                "🚨 Alertes",
+                summary.totalAlerts,
+                "var(--blue)"
+            );
+
+    }
 
 }
       async function clockIn() {
@@ -2012,16 +4308,59 @@ if (appMain) appMain.style.display = "block";
         console.log("Présences chargées :", state.attendance);
       }
 
-      function validateTask(id) {
-        const x = state.tasks.find((t) => t.id === id);
-        const comment = prompt("Commentaire éventuel", "") || "";
-        x.status = "réalisée";
-        x.validatedAt = today() + " " + nowTime();
-        x.validatedBy = userName(state.currentUser);
-        x.comment = comment;
-        log("Validation tâche", x.name + " par " + x.validatedBy);
-        render();
-      }
+      async function validateTask(id) {
+
+    const x = state.tasks.find((t) => t.id === id);
+
+    if (!x) return;
+
+
+    // Mise à jour locale
+    x.status = "réalisée";
+    x.completed = true;
+
+    x.validatedAt = today() + " " + nowTime();
+
+    x.validatedBy = userName(state.currentUser);
+
+
+    // Mise à jour Supabase
+    const { error } = await window.sb
+        .from("Tasks")
+        .update({
+            completed: true
+        })
+        .eq("id", id);
+
+
+    console.log(
+        "Validation tâche Supabase :",
+        error
+    );
+
+
+    if (error) {
+
+        alert(
+            "Impossible d'enregistrer la validation"
+        );
+
+        return;
+
+    }
+
+
+    log(
+        "Validation tâche",
+        x.titre + " par " + x.validatedBy
+    );
+
+
+    save();
+
+    render();
+
+}
       function duplicateTask(id) {
         const x = state.tasks.find((t) => t.id === id);
         const copy = {
@@ -2122,48 +4461,298 @@ if (appMain) appMain.style.display = "block";
             .join("") +
           "</tbody></table>";
       }
+      function weekLabel(){
+
+    const start=new Date(selectedWeekStart);
+
+    const end=new Date(start);
+
+    end.setDate(start.getDate()+6);
+
+    return "Semaine du "
+
+    +start.toLocaleDateString(
+        "fr-FR",
+        {
+            day:"numeric",
+            month:"long"
+        }
+    )
+
+    +" au "
+
+    +end.toLocaleDateString(
+        "fr-FR",
+        {
+            day:"numeric",
+            month:"long",
+            year:"numeric"
+        }
+    );
+
+}
       function renderWeekly() {
-        weekPicker.value = selectedWeekStart;
-        const days = dayNames.map((d, i) => ({
-          name: d,
-          date: addDays(selectedWeekStart, i),
-        }));
-        weekBoard.innerHTML = days
-          .map((day) => {
+
+    weekPicker.value = selectedWeekStart;
+document.getElementById("weeklyTitle").innerHTML = weekLabel();
+
+    const days = dayNames.map((d, i) => ({
+        name: d,
+        date: addDays(selectedWeekStart, i),
+    }));
+
+
+    const admin = currentUserIsAdmin();
+
+
+    // Gestion des actions admin
+    document.getElementById("weeklyAdminActions").innerHTML = admin
+
+        ?
+
+        '<button onclick="openTaskModal(null, selectedWeekStart)">' +
+            '+ Programmer une tâche' +
+        '</button>' +
+
+        '<button class="secondary" onclick="duplicateWeek()">' +
+            'Dupliquer la semaine' +
+        '</button>'
+
+        :
+
+        '';
+
+
+
+    // Gestion du texte d'information
+
+    document.getElementById("weeklyNotice").innerHTML = admin
+
+        ?
+
+        "Prépare le programme hebdomadaire des tâches pour chaque membre."
+
+        :
+
+        "Consultez vos tâches prévues pour la semaine.";
+
+
+
+    weekBoard.innerHTML = days
+
+        .map((day) => {
+
+
             const tasks = state.tasks.filter(
-  (t) =>
-    t.date === day.date &&
-    (currentUserIsAdmin() || t.memberId === state.currentUser)
-);
-            return (
-              '<div class="day-col"><h3>' +
-              day.name +
-              '<br><span class="meta">' +
-              day.date +
-              "</span></h3>" +
-              tasks
-                .map(
-                  (x) =>
-                    '<div class="mini-task priority-' +
-                    x.priority +
-                    '"><b>' +
-                    x.due +
-                    " · " +
-                    x.name +
-                    "</b><span>" +
-                    userName(x.memberId) +
-                    " · " +
-                    x.status +
-                    "</span></div>",
+
+                (t) =>
+
+                t.date === day.date &&
+
+                (
+                    admin ||
+
+                    String(t.memberId) === String(state.currentUser)
+
                 )
-                .join("") +
-              '<button class="secondary" onclick="openTaskModal(null,\'' +
-              day.date +
-              "')\">+ Ajouter</button></div>"
+
             );
-          })
-          .join("");
-      }
+
+
+            return (
+
+                '<div class="day-col">' +
+
+                    '<h3>' +
+
+                        day.name +
+
+                        '<br>' +
+
+                        '<span class="meta">' +
+
+                            day.date +
+
+                        '</span>' +
+
+                    '</h3>' +
+
+
+                    (
+
+                    tasks.length
+
+                    ?
+
+                    tasks.map(taskCard).join("")
+
+                    :
+
+                    '<div class="empty">' +
+                    'Aucune tâche prévue' +
+                    '</div>'
+
+                    )
+
+
+                +
+
+                '</div>'
+
+            );
+
+
+        })
+
+        .join("");
+
+}
+function renderEmployeeSchedule(){
+
+    if(currentUserIsAdmin()) return;
+
+    const planning =
+        state.schedules[state.currentUser] || makeSchedule();
+
+    const month = new Date().toLocaleDateString(
+        "fr-FR",
+        {
+            month:"long",
+            year:"numeric"
+        }
+    );
+
+    document.getElementById(
+        "employeeScheduleTitle"
+    ).innerHTML =
+        "Emploi du temps - " +
+        month;
+
+    document.getElementById(
+        "employeeScheduleTable"
+    ).innerHTML =
+
+        `
+        <table class="table">
+
+            <thead>
+
+                <tr>
+
+                    <th>Jour</th>
+                    <th>Début</th>
+                    <th>Fin</th>
+                    <th>Pause</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                ${planning.map(j=>`
+
+                    <tr>
+
+                        <td>${j.day}</td>
+
+                        <td>${j.work ? j.start : "-"}</td>
+
+                        <td>
+
+${
+j.work
+? j.end
+: '<span class="repos">Repos</span>'
+}
+
+</td>
+
+                        <td>${j.work ? j.break : "-"}</td>
+
+                    </tr>
+
+                `).join("")}
+
+            </tbody>
+
+        </table>
+
+        `;
+
+}
+      function renderEmployeeWeeklyTasks() {
+
+    const days = dayNames.map((d, i) => ({
+        name: d,
+        date: addDays(selectedWeekStart, i),
+    }));
+
+    const employeeTasks = state.tasks.filter(
+        (t) => t.memberId === state.currentUser
+    );
+
+
+    weekBoard.innerHTML = days.map((day)=>{
+
+        const tasks = employeeTasks.filter(
+            (t)=>t.date === day.date
+        );
+
+
+        return `
+
+        <div class="day-col">
+
+            <h3>
+                ${day.name}
+                <br>
+                <span class="meta">${day.date}</span>
+            </h3>
+
+
+            ${
+                tasks.length
+
+                ?
+
+                tasks.map((x)=>`
+
+                    <div class="mini-task priority-${x.priority}">
+
+                        <b>
+                            ${x.due} · ${x.name}
+                        </b>
+
+                        <span>
+                            ${
+                                x.status === "réalisée"
+                                ? "✓ Terminée"
+                                : "☐ À faire"
+                            }
+                        </span>
+
+                    </div>
+
+                `).join("")
+
+                :
+
+                `<div class="empty">
+                    Aucune tâche prévue
+                 </div>`
+
+            }
+
+
+        </div>
+
+        `;
+
+
+    }).join("");
+
+}
       function shiftWeek(n) {
         selectedWeekStart = addDays(selectedWeekStart, n);
         renderWeekly();
@@ -2292,7 +4881,7 @@ if (appMain) appMain.style.display = "block";
           .join("");
       }
       function openMemberModal(id) {
-        if (!currentUserIsAdmin()()) {
+        if (!currentUserIsAdmin()) {
           return;
         }
         editingMember = id;
@@ -2308,32 +4897,52 @@ if (appMain) appMain.style.display = "block";
               profilePhoto: "",
             };
         memberForm.innerHTML =
-          '<div class="field full"><label class="label">Photo de profil</label><div class="profile-preview"><span id="profilePreview">' +
-          avatarHtml(m) +
-          '</span><div style="flex:1"><input name="profilePhotoFile" type="file" accept="image/*" onchange="previewProfilePhoto(this)"><input name="profilePhoto" type="hidden" value="' +
-          (m.profilePhoto || "") +
-          '"><button class="secondary" type="button" onclick="removeProfilePhoto()" style="margin-top:8px">Retirer la photo</button></div></div></div><div class="field"><label class="label">Nom</label><input name="name" value="' +
-          m.name +
-          '" required></div><div class="field"><label class="label">Poste</label><select name="post">' +
-          posts
-            .map(
-              (p) =>
-                "<option " +
-                (p === m.post ? "selected" : "") +
-                ">" +
-                p +
-                "</option>",
-            )
-            .join("") +
-          '</select></div><div class="field"><label class="label">Rôle</label><select name="role"><option value="employee">Employé</option><option value="admin" ' +
-          (m.role === "admin" ? "selected" : "") +
-          '>Administrateur</option></select></div><div class="field"><label class="label">Statut</label><select name="active"><option value="true">Actif</option><option value="false" ' +
-          (!m.active ? "selected" : "") +
-          '>Inactif</option></select></div><div class="field"><label class="label">Téléphone</label><input name="phone" value="' +
-          (m.phone || "") +
-          '"></div><div class="field"><label class="label">E-mail</label><input name="email" value="' +
-          (m.email || "") +
-          '"></div><div class="full row right"><button class="secondary" type="button" onclick="memberDialog.close()">Annuler</button><button>Enregistrer</button></div>';
+  '<div class="field full"><label class="label">Photo de profil</label><div class="profile-preview"><span id="profilePreview">' +
+  avatarHtml(m) +
+  '</span><div style="flex:1"><input name="profilePhotoFile" type="file" accept="image/*" onchange="previewProfilePhoto(this)"><input name="profilePhoto" type="hidden" value="' +
+  (m.profilePhoto || "") +
+  '"><button class="secondary" type="button" onclick="removeProfilePhoto()" style="margin-top:8px">Retirer la photo</button></div></div></div>' +
+
+  '<div class="field"><label class="label">Nom</label><input name="name" value="' +
+  m.name +
+  '" required></div>' +
+
+  '<div class="field"><label class="label">Poste</label><input name="post" value="' +
+  (m.post || "") +
+  '" placeholder="Ex. Magasinier en chef"></div>' +
+
+  '<div class="field"><label class="label">Rôle</label><select name="role"><option value="employee">Employé</option><option value="admin" ' +
+  (m.role === "admin" ? "selected" : "") +
+  '>Administrateur</option></select></div>' +
+
+  '<div class="field"><label class="label">Statut</label><select name="active"><option value="true">Actif</option><option value="false" ' +
+  (!m.active ? "selected" : "") +
+  '>Inactif</option></select></div>' +
+
+  '<div class="field"><label class="label">Téléphone</label><input name="phone" value="' +
+  (m.phone || "") +
+  '"></div>' +
+
+  '<div class="field"><label class="label">E-mail</label><input name="email" value="' +
+  (m.email || "") +
+  '"></div>' +
+
+  '<div class="full row right">' +
+
+  '<button class="secondary" type="button" onclick="memberDialog.close()">' +
+    'Annuler' +
+  '</button>' +
+
+  (id
+    ? '<button class="danger" type="button" onclick="deleteMember(\'' + id + '\')">' +
+        'Supprimer' +
+      '</button>'
+    : ''
+  ) +
+
+  '<button>Enregistrer</button>' +
+
+'</div>';
         memberDialog.showModal();
       }
       memberForm.onsubmit = async (e) => {
@@ -2341,8 +4950,13 @@ if (appMain) appMain.style.display = "block";
         const d = Object.fromEntries(new FormData(memberForm));
         let profilePhoto = d.profilePhoto || "";
         const fileInput = memberForm.querySelector('[name="profilePhotoFile"]');
-        const files = await readFiles(fileInput);
-        if (files[0]) profilePhoto = files[0].data;
+        const selectedFile = fileInput.files[0];
+
+if(selectedFile){
+
+    profilePhoto = await uploadProfilePhoto(selectedFile);
+
+}
         const item = {
           id: editingMember || uid(),
           name: d.name,
@@ -2364,6 +4978,7 @@ if (appMain) appMain.style.display = "block";
               Role: item.role === "admin" ? "Administrateur" : "Employé",
               Telephone: item.phone,
               Actif: item.active,
+              profile_photo: profilePhoto
             })
             .eq("id", editingMember);
 
@@ -2379,6 +4994,7 @@ if (appMain) appMain.style.display = "block";
             Role: item.role === "admin" ? "Administrateur" : "Employé",
             Telephone: item.phone,
             Actif: item.active,
+            profile_photo: profilePhoto
           });
 
           console.log("Création membre :", error);
@@ -2391,6 +5007,160 @@ if (appMain) appMain.style.display = "block";
         memberDialog.close();
         render();
       };
+      async function deleteMember(id) {
+
+    if (!currentUserIsAdmin()) {
+        return;
+    }
+
+    const m = member(id);
+
+    if (!m) {
+        alert("Membre introuvable.");
+        return;
+    }
+
+    // Empêche de supprimer le compte actuellement connecté
+    if (String(state.currentUser) === String(id)) {
+        alert("Vous ne pouvez pas supprimer le membre actuellement connecté.");
+        return;
+    }
+
+    // Vérification des tâches liées au membre
+    const { count: taskCount, error: taskError } = await window.sb
+        .from("Tasks")
+        .select("id", { count: "exact", head: true })
+        .eq("assignee", id);
+
+    if (taskError) {
+
+        console.error(
+            "Erreur vérification tâches :",
+            taskError
+        );
+
+        alert(
+            "Impossible de vérifier les tâches de ce membre."
+        );
+
+        return;
+    }
+
+
+    // Vérification des pointages liés au membre
+    const { count: attendanceCount, error: attendanceError } =
+        await window.sb
+            .from("Attendance")
+            .select("member_id", { count: "exact", head: true })
+            .eq("member_id", id);
+
+    if (attendanceError) {
+
+        console.error(
+            "Erreur vérification pointages :",
+            attendanceError
+        );
+
+        alert(
+            "Impossible de vérifier les pointages de ce membre."
+        );
+
+        return;
+    }
+
+
+    // Si le membre possède un historique,
+    // on refuse la suppression définitive.
+    if ((taskCount || 0) > 0 || (attendanceCount || 0) > 0) {
+
+        alert(
+            "Impossible de supprimer définitivement " +
+            m.name +
+            ".\n\n" +
+            "Ce membre possède encore des données historiques " +
+            "(tâches ou pointages).\n\n" +
+            "Utilisez plutôt Désactiver pour conserver son historique."
+        );
+
+        return;
+    }
+
+
+    // Dernière confirmation
+    const confirmed = confirm(
+        "Supprimer définitivement " +
+        m.name +
+        " ?\n\n" +
+        "Cette action est irréversible."
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
+
+    // Suppression de l'emploi du temps
+    const { error: scheduleError } = await window.sb
+        .from("Schedules")
+        .delete()
+        .eq("member_id", id);
+
+    if (scheduleError) {
+
+        console.error(
+            "Erreur suppression planning :",
+            scheduleError
+        );
+
+        alert(
+            "Impossible de supprimer l'emploi du temps du membre."
+        );
+
+        return;
+    }
+
+
+    // Suppression du membre
+    const { error: memberError } = await window.sb
+        .from("Members")
+        .delete()
+        .eq("id", id);
+
+    if (memberError) {
+
+        console.error(
+            "Erreur suppression membre :",
+            memberError
+        );
+
+        alert(
+            "Impossible de supprimer ce membre."
+        );
+
+        return;
+    }
+
+
+    // Mise à jour de l'état local
+    state.members = state.members.filter(
+        x => String(x.id) !== String(id)
+    );
+
+    delete state.schedules[id];
+
+
+    log(
+        "Suppression membre",
+        m.name
+    );
+
+
+    save();
+
+    memberDialog.close();
+
+    render();
+}
       async function toggleMember(id) {
         if (!currentUserIsAdmin()) {
           return;
@@ -2414,6 +5184,34 @@ if (appMain) appMain.style.display = "block";
         save();
         render();
       }
+      async function uploadProfilePhoto(file){
+        console.log("Début upload avatar");
+    const fileName =
+        Date.now() +
+        "_" +
+        Math.random().toString(36).substring(2) +
+        "_" +
+        file.name;
+
+    const { error } = await window.sb.storage
+        .from("avatars")
+        .upload(fileName, file);
+    console.log("Résultat upload :", error);
+    if(error){
+
+        console.log("Erreur upload avatar :", error);
+
+        return "";
+
+    }
+
+    const { data } = window.sb.storage
+        .from("avatars")
+        .getPublicUrl(fileName);
+
+    return data.publicUrl;
+
+}
       async function uploadTaskPhotos(files) {
         console.log("Upload lancé :", files);
         const urls = [];
@@ -2846,12 +5644,16 @@ if (appMain) appMain.style.display = "block";
         sessionStorage.setItem("loggedUser", JSON.stringify(data));
 
         if (data.role_access === "admin") {
-  active = "home";
+    active = "home";
 } else {
-  active = "home";
+    active = "home";
 }
-        save();
-        render();
+
+// On ferme toujours le menu après connexion
+closeMenu();
+
+save();
+render();
 
         console.log("Connexion réussie :", data);
       }
@@ -2888,19 +5690,25 @@ if (appMain) appMain.style.display = "block";
       console.log("Supabase connecté");
       console.log("VERSION TEST LOGIN");
 
-      (async () => {
-        await loadMembersFromSupabase();
+     (async () => {
 
-        await loadTasksFromSupabase();
+    await loadMembersFromSupabase();
 
-        await loadSchedulesFromSupabase();
+    await loadTasksFromSupabase();
 
-        await loadAttendanceFromSupabase();
+    await loadSchedulesFromSupabase();
 
-        save();
+    await loadAttendanceFromSupabase();
 
-        render();
-      })();
+    save();
+
+    closeMenu();
+
+    render();
+
+    document.body.style.visibility = "visible";
+
+})(); 
       function closeMenu() {
   sideMenu.classList.remove("open");
   menuOverlay.classList.remove("open");
