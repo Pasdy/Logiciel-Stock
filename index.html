@@ -2400,6 +2400,7 @@ const currentDayName = () => {
           priority: t.priorite || "normale",
           status: t.completed ? "réalisée" : "a faire",
           date: t.date || today(),
+          dateEnd: t.date_fin || t.date || today(),
           post: "",
           comment: "",
           validatedAt: "",
@@ -2533,13 +2534,13 @@ function toggleAdminAlerts(){
     return user && user.role_access === "admin";
 }
       function dueLate(task) {
-        return (
-          task.status !== "réalisée" &&
-          task.date === today() &&
-          task.due &&
-          task.due < nowTime()
-        );
-      }
+  return (
+    task.status !== "réalisée" &&
+    taskOccursOnDate(task, today()) &&
+    task.due &&
+    task.due < nowTime()
+  );
+}
       function normalizeStatuses() {
         state.tasks.forEach((x) => {
           if (dueLate(x)) x.status = "en retard";
@@ -2548,7 +2549,7 @@ function toggleAdminAlerts(){
       }
       function generateTaskSummary(){
 
-    const todayTasks = state.tasks.filter(t => t.date === today());
+    const todayTasks = state.tasks.filter(t => taskOccursOnDate(t, today()));
 
     const summary = {
 
@@ -4681,6 +4682,44 @@ j.work
         `;
 
 }
+function taskOccursOnDate(task, targetDate) {
+    const start = task.date || today();
+    const end = task.dateEnd || start;
+
+    // Hors période
+    if (targetDate < start || targetDate > end) {
+        return false;
+    }
+
+    // Tâche ponctuelle
+    if (task.freq === "ponctuelle") {
+        return targetDate === start;
+    }
+
+    const startDate = new Date(start + "T00:00:00");
+    const currentDate = new Date(targetDate + "T00:00:00");
+
+    const diffDays = Math.floor(
+        (currentDate - startDate) / (1000 * 60 * 60 * 24)
+    );
+
+    // Journalière
+    if (task.freq === "journalière") {
+        return true;
+    }
+
+    // Hebdomadaire
+    if (task.freq === "hebdomadaire") {
+        return diffDays % 7 === 0;
+    }
+
+    // Mensuelle
+    if (task.freq === "mensuelle") {
+        return currentDate.getDate() === startDate.getDate();
+    }
+
+    return false;
+}
       function renderEmployeeWeeklyTasks() {
 
     const days = dayNames.map((d, i) => ({
@@ -4696,9 +4735,8 @@ j.work
     weekBoard.innerHTML = days.map((day)=>{
 
         const tasks = employeeTasks.filter(
-            (t)=>t.date === day.date
-        );
-
+    (t) => taskOccursOnDate(t, day.date)
+);
 
         return `
 
@@ -5322,12 +5360,14 @@ if(selectedFile){
                 "</option>",
             )
             .join("") +
-          '</select></div><div class="field"><label class="label">Date précise</label><input name="date" type="date" value="' +
-          (x.date || today()) +
-          '"></div><div class="field"><label class="label">Heure prévue</label><input name="due" type="time" value="' +
-          x.due +
-          '"></div><div class="field"><label class="label">Priorité</label><select name="priority">' +
-          ["faible", "normale", "importante", "urgente"]
+'</select></div><div class="field"><label class="label">Date de début</label><input name="date" type="date" value="' +
+(x.date || today()) +
+'"></div><div class="field"><label class="label">Date de fin</label><input name="dateEnd" type="date" value="' +
+(x.dateEnd || x.date || today()) +
+'"></div><div class="field"><label class="label">Heure prévue</label><input name="due" type="time" value="' +
+x.due +
+'"></div><div class="field"><label class="label">Priorité</label><select name="priority">' +
+["faible", "normale", "importante", "urgente"]
             .map(
               (p) =>
                 "<option " +
@@ -5393,6 +5433,7 @@ if(selectedFile){
           post: fd.get("post"),
           freq: fd.get("freq"),
           date: fd.get("date"),
+          dateEnd: fd.get("dateEnd") || fd.get("date"),
           due: fd.get("due"),
           priority: fd.get("priority"),
           status: fd.get("status"),
@@ -5413,18 +5454,20 @@ if(selectedFile){
           );
 
           const { error } = await window.sb
-            .from("Tasks")
-            .update({
-              titre: item.name,
-              description: item.desc,
-              frequence: item.freq,
-              heure_prevue: item.due,
-              priorite: item.priority,
-              assignee: item.memberId,
-              photo_urls: item.photo_urls,
-              completed: item.status === "réalisée",
-            })
-            .eq("id", item.id);
+  .from("Tasks")
+  .update({
+    titre: item.name,
+    description: item.desc,
+    frequence: item.freq,
+    heure_prevue: item.due,
+    priorite: item.priority,
+    assignee: item.memberId,
+    date: item.date,
+    date_fin: item.dateEnd,
+    photo_urls: item.photo_urls,
+    completed: item.status === "réalisée",
+  })
+  .eq("id", item.id);
 
           console.log("Modification :", error);
 
@@ -5440,6 +5483,7 @@ if(selectedFile){
             priorite: item.priority,
             assignee: item.memberId,
             date: item.date,
+            date_fin: item.dateEnd,
             photo_urls: item.photo_urls,
             completed: false,
           });
